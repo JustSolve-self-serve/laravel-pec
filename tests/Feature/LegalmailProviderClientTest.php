@@ -3,12 +3,12 @@
 namespace JustSolve\LegalmailPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
-use JustSolve\LegalmailPec\Contracts\LegalmailPecClient;
-use JustSolve\LegalmailPec\Services\HttpLegalmailPecClient;
+use JustSolve\LegalmailPec\Contracts\PecClient;
+use JustSolve\LegalmailPec\Services\LegalmailProviderClient;
 use JustSolve\LegalmailPec\Tests\TestCase;
 use RuntimeException;
 
-class HttpLegalmailPecClientTest extends TestCase
+class LegalmailProviderClientTest extends TestCase
 {
     public function test_it_lists_messages(): void
     {
@@ -16,7 +16,7 @@ class HttpLegalmailPecClientTest extends TestCase
             '*' => Http::response(['data' => []], 200),
         ]);
 
-        $client = $this->app->make(LegalmailPecClient::class);
+        $client = $this->app->make(PecClient::class);
         $response = $client->listMessages(['limit' => 10]);
 
         $this->assertSame(['data' => []], $response);
@@ -34,7 +34,7 @@ class HttpLegalmailPecClientTest extends TestCase
             '*' => Http::response(['id' => '42'], 200),
         ]);
 
-        $client = $this->app->make(LegalmailPecClient::class);
+        $client = $this->app->make(PecClient::class);
         $response = $client->getMessage('42');
 
         $this->assertSame(['id' => '42'], $response);
@@ -51,7 +51,7 @@ class HttpLegalmailPecClientTest extends TestCase
             '*' => Http::response(['submissionId' => 'sub-1'], 201),
         ]);
 
-        $client = $this->app->make(LegalmailPecClient::class);
+        $client = $this->app->make(PecClient::class);
         $payload = ['subject' => 'Test'];
 
         $response = $client->createSubmission($payload);
@@ -71,7 +71,7 @@ class HttpLegalmailPecClientTest extends TestCase
             '*' => Http::response(['updated' => true], 200),
         ]);
 
-        $client = $this->app->make(LegalmailPecClient::class);
+        $client = $this->app->make(PecClient::class);
         $response = $client->updateMessage('42', ['status' => 'read']);
 
         $this->assertSame(['updated' => true], $response);
@@ -89,7 +89,7 @@ class HttpLegalmailPecClientTest extends TestCase
             '*' => Http::response([], 204),
         ]);
 
-        $client = $this->app->make(LegalmailPecClient::class);
+        $client = $this->app->make(PecClient::class);
         $result = $client->deleteMessage('42');
 
         $this->assertTrue($result);
@@ -102,7 +102,7 @@ class HttpLegalmailPecClientTest extends TestCase
 
     public function test_it_throws_if_required_path_segments_are_missing(): void
     {
-        $client = new HttpLegalmailPecClient(
+        $client = new LegalmailProviderClient(
             baseUrl: 'https://sandbox.example.test',
             token: 'token',
             timeout: 20,
@@ -113,7 +113,7 @@ class HttpLegalmailPecClientTest extends TestCase
         );
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Missing Legalmail PEC list path parameters');
+        $this->expectExceptionMessage('Missing PEC message path parameters');
 
         $client->listMessages();
     }

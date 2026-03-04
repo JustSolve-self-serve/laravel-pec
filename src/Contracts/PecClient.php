@@ -2,7 +2,7 @@
 
 namespace JustSolve\LegalmailPec\Contracts;
 
-interface LegalmailPecClient
+interface PecClient
 {
     /**
      * Retrieve a collection of resources from the provider.

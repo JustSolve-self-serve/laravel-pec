@@ -29,7 +29,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "JustSolve\\LegalmailPec\\LegalmailPecServiceProvider"
+        "JustSolve\\LegalmailPec\\PecServiceProvider"
       ]
     }
   },

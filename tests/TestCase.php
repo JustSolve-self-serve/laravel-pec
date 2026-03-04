@@ -2,7 +2,7 @@
 
 namespace JustSolve\LegalmailPec\Tests;
 
-use JustSolve\LegalmailPec\LegalmailPecServiceProvider;
+use JustSolve\LegalmailPec\PecServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -10,18 +10,29 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
-            LegalmailPecServiceProvider::class,
+            PecServiceProvider::class,
         ];
     }
 
     protected function defineEnvironment($app): void
     {
-        $app['config']->set('legalmail-pec.base_url', env('LEGALMAIL_PEC_BASE_URL', 'https://sandbox.example.test'));
-        $app['config']->set('legalmail-pec.token', env('LEGALMAIL_PEC_TOKEN', 'test-token'));
-        $app['config']->set('legalmail-pec.timeout', (int) env('LEGALMAIL_PEC_TIMEOUT', 20));
-        $app['config']->set('legalmail-pec.mailbox_id', env('LEGALMAIL_PEC_MAILBOX_ID', 'mailbox-1'));
-        $app['config']->set('legalmail-pec.folder_id', env('LEGALMAIL_PEC_FOLDER_ID', 'folder-1'));
-        $app['config']->set('legalmail-pec.message_uid_validity', env('LEGALMAIL_PEC_MESSAGE_UID_VALIDITY', '999'));
-        $app['config']->set('legalmail-pec.headers', []);
+        $app['config']->set('pec.default', env('LEGALMAIL_PEC_DRIVER', 'legalmail'));
+        $app['config']->set('pec.mailbox_id', env('LEGALMAIL_PEC_MAILBOX_ID', 'mailbox-1'));
+        $app['config']->set('pec.folder_id', env('LEGALMAIL_PEC_FOLDER_ID', 'folder-1'));
+        $app['config']->set('pec.message_uid_validity', env('LEGALMAIL_PEC_MESSAGE_UID_VALIDITY', '999'));
+        $app['config']->set('pec.drivers', [
+            'legalmail' => [
+                'base_url' => env('LEGALMAIL_PEC_BASE_URL', 'https://sandbox.example.test'),
+                'token' => env('LEGALMAIL_PEC_TOKEN', 'test-token'),
+                'timeout' => (int) env('LEGALMAIL_PEC_TIMEOUT', 20),
+                'headers' => [],
+            ],
+            'openapi_pec_massiva' => [
+                'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://openapi.example.test'),
+                'token' => env('OPENAPI_PEC_MASSIVA_TOKEN', 'openapi-token'),
+                'timeout' => (int) env('OPENAPI_PEC_MASSIVA_TIMEOUT', 20),
+                'headers' => [],
+            ],
+        ]);
     }
 }

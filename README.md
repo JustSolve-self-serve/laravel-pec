@@ -41,19 +41,27 @@ composer require justsolve/legalmail-pec:@dev
 Publish config:
 
 ```bash
-php artisan vendor:publish --tag=legalmail-pec-config
+php artisan vendor:publish --tag=pec-config
 ```
 
 Set these variables in your app `.env`:
 
 ```env
-LEGALMAIL_PEC_BASE_URL=https://your-sandbox-or-production-base-url
-LEGALMAIL_PEC_TOKEN=your-api-token
-LEGALMAIL_PEC_TIMEOUT=20
+LEGALMAIL_PEC_DRIVER=legalmail # legalmail|openapi_pec_massiva
 
 LEGALMAIL_PEC_MAILBOX_ID=your-mailbox-id
 LEGALMAIL_PEC_FOLDER_ID=your-folder-id
 LEGALMAIL_PEC_MESSAGE_UID_VALIDITY=your-message-uid-validity
+
+# Driver: legalmail
+LEGALMAIL_PEC_BASE_URL=https://your-legalmail-base-url
+LEGALMAIL_PEC_TOKEN=your-legalmail-token
+LEGALMAIL_PEC_TIMEOUT=20
+
+# Driver: openapi_pec_massiva
+OPENAPI_PEC_MASSIVA_BASE_URL=https://your-openapi-base-url
+OPENAPI_PEC_MASSIVA_TOKEN=your-openapi-token
+OPENAPI_PEC_MASSIVA_TIMEOUT=20
 ```
 
 ## Usage
@@ -61,15 +69,23 @@ LEGALMAIL_PEC_MESSAGE_UID_VALIDITY=your-message-uid-validity
 Resolve via container:
 
 ```php
-use JustSolve\LegalmailPec\Contracts\LegalmailPecClient;
+use JustSolve\LegalmailPec\Contracts\PecClient;
+use JustSolve\LegalmailPec\Contracts\PecClientManager;
 
-$client = app(LegalmailPecClient::class);
+// Default driver from config(pec.default)
+$client = app(PecClient::class);
+
+// Explicit driver selection at runtime
+$manager = app(PecClientManager::class);
+$legalmailClient = $manager->driver('legalmail');
+$massivaClient = $manager->driver('openapi_pec_massiva');
 ```
 
 Or use helper:
 
 ```php
-$client = legalmail_pec();
+$client = pec_client(); // default driver
+$massivaClient = pec_client('openapi_pec_massiva');
 ```
 
 ### listMessages
@@ -155,6 +171,7 @@ From package root, set env vars in your terminal session:
 
 ```bash
 export LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true
+export LEGALMAIL_PEC_DRIVER="legalmail" # or openapi_pec_massiva
 export LEGALMAIL_PEC_BASE_URL="https://your-sandbox-url"
 export LEGALMAIL_PEC_TOKEN="your-token"
 export LEGALMAIL_PEC_MAILBOX_ID="your-mailbox-id"

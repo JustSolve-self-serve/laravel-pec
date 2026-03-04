@@ -5,10 +5,10 @@ namespace JustSolve\LegalmailPec\Services;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use JustSolve\LegalmailPec\Contracts\LegalmailPecClient;
+use JustSolve\LegalmailPec\Contracts\PecClient;
 use RuntimeException;
 
-class HttpLegalmailPecClient implements LegalmailPecClient
+abstract class AbstractHttpPecClient implements PecClient
 {
     /**
      * @param array<string, string> $headers
@@ -29,8 +29,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
         ?string $mailboxId = null,
         ?string $folderId = null,
         ?string $messageUidValidity = null
-    ): array
-    {
+    ): array {
         return $this->request('GET', $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity), ['query' => $query]);
     }
 
@@ -39,8 +38,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
         ?string $mailboxId = null,
         ?string $folderId = null,
         ?string $messageUidValidity = null
-    ): array
-    {
+    ): array {
         return $this->request('GET', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity));
     }
 
@@ -55,8 +53,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
         ?string $mailboxId = null,
         ?string $folderId = null,
         ?string $messageUidValidity = null
-    ): array
-    {
+    ): array {
         return $this->request(
             'PUT',
             $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity),
@@ -69,8 +66,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
         ?string $mailboxId = null,
         ?string $folderId = null,
         ?string $messageUidValidity = null
-    ): bool
-    {
+    ): bool {
         $this->request('DELETE', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity));
 
         return true;
@@ -118,7 +114,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
         }
 
         $message = sprintf(
-            'Legalmail PEC request failed with status [%d]: %s',
+            'PEC request failed with status [%d]: %s',
             $response->status(),
             $response->body()
         );
@@ -131,8 +127,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
         ?string $mailboxId,
         ?string $folderId,
         ?string $messageUidValidity
-    ): string
-    {
+    ): string {
         return $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity) . '/' . rawurlencode($messageUid);
     }
 
@@ -147,7 +142,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
 
         if ($resolvedMailboxId === null || $resolvedFolderId === null || $resolvedMessageUidValidity === null) {
             throw new RuntimeException(
-                'Missing Legalmail PEC list path parameters. Configure mailbox_id, folder_id, and message_uid_validity or pass them explicitly.'
+                'Missing PEC message path parameters. Configure mailbox_id, folder_id, and message_uid_validity or pass them explicitly.'
             );
         }
 
@@ -165,7 +160,7 @@ class HttpLegalmailPecClient implements LegalmailPecClient
 
         if ($resolvedMailboxId === null) {
             throw new RuntimeException(
-                'Missing Legalmail PEC submission path parameter. Configure mailbox_id or pass it explicitly.'
+                'Missing PEC submission path parameter. Configure mailbox_id or pass it explicitly.'
             );
         }
 

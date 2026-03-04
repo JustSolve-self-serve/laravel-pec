@@ -2,10 +2,10 @@
 
 namespace JustSolve\LegalmailPec\Tests\Integration;
 
-use JustSolve\LegalmailPec\Contracts\LegalmailPecClient;
+use JustSolve\LegalmailPec\Contracts\PecClient;
 use JustSolve\LegalmailPec\Tests\TestCase;
 
-class LegalmailPecSandboxTest extends TestCase
+class PecSandboxIntegrationTest extends TestCase
 {
     public function test_it_can_list_messages_against_sandbox(): void
     {
@@ -13,7 +13,7 @@ class LegalmailPecSandboxTest extends TestCase
             $this->markTestSkipped('Integration test disabled. Set LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true to enable.');
         }
 
-        $client = $this->app->make(LegalmailPecClient::class);
+        $client = $this->app->make(PecClient::class);
         $response = $client->listMessages();
 
         $this->assertIsArray($response);
@@ -31,7 +31,7 @@ class LegalmailPecSandboxTest extends TestCase
             $this->markTestSkipped('LEGALMAIL_PEC_TEST_MESSAGE_UID not set.');
         }
 
-        $client = $this->app->make(LegalmailPecClient::class);
+        $client = $this->app->make(PecClient::class);
         $response = $client->getMessage($messageUid);
 
         $this->assertIsArray($response);
