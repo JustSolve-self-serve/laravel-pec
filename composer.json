@@ -1,5 +1,5 @@
 {
-  "name": "justsolve/legalmail-pec",
+  "name": "justsolve/laravel-pec",
   "description": "Manage PEC emails with Laravel.",
   "type": "library",
   "authors": [
