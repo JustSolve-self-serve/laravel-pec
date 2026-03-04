@@ -56,6 +56,16 @@ class PecClientManager implements PecClientManagerContract
     }
 
     /**
+     * Forward unknown calls to the default PEC client.
+     *
+     * @param array<int, mixed> $arguments
+     */
+    public function __call(string $method, array $arguments): mixed
+    {
+        return $this->default()->{$method}(...$arguments);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function clientConfigForDriver(string $driver): array

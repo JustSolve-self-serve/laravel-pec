@@ -30,7 +30,10 @@
     "laravel": {
       "providers": [
         "JustSolve\\LegalmailPec\\PecServiceProvider"
-      ]
+      ],
+      "aliases": {
+        "Pec": "JustSolve\\LegalmailPec\\Facades\\Pec"
+      }
     }
   },
   "minimum-stability": "dev",

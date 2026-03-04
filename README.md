@@ -81,6 +81,15 @@ $legalmailClient = $manager->driver('legalmail');
 $massivaClient = $manager->driver('openapi_pec_massiva');
 ```
 
+Use facade:
+
+```php
+use JustSolve\LegalmailPec\Facades\Pec;
+
+Pec::createSubmission(['subject' => 'Hello']); // default driver
+Pec::driver('openapi_pec_massiva')->createSubmission(['subject' => 'Hello']); // explicit driver
+```
+
 Or use helper:
 
 ```php
