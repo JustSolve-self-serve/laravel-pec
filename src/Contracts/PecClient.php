@@ -38,20 +38,6 @@ interface PecClient
     public function createSubmission(array $payload, ?string $mailboxId = null): array;
 
     /**
-     * Update a resource in the provider.
-     *
-     * @param array<string, mixed> $payload
-     * @return array<string, mixed>
-     */
-    public function updateMessage(
-        string $messageUid,
-        array $payload,
-        ?string $mailboxId = null,
-        ?string $folderId = null,
-        ?string $messageUidValidity = null
-    ): array;
-
-    /**
      * Delete a resource in the provider.
      */
     public function deleteMessage(

@@ -47,20 +47,6 @@ abstract class AbstractHttpPecClient implements PecClient
         return $this->request('POST', $this->submissionPath($mailboxId), ['json' => $payload]);
     }
 
-    public function updateMessage(
-        string $messageUid,
-        array $payload,
-        ?string $mailboxId = null,
-        ?string $folderId = null,
-        ?string $messageUidValidity = null
-    ): array {
-        return $this->request(
-            'PUT',
-            $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity),
-            ['json' => $payload]
-        );
-    }
-
     public function deleteMessage(
         string $messageUid,
         ?string $mailboxId = null,
@@ -76,8 +62,12 @@ abstract class AbstractHttpPecClient implements PecClient
      * @param array{query?: array<string, mixed>, json?: array<string, mixed>} $options
      * @return array<string, mixed>
      */
-    private function request(string $method, string $uri, array $options = []): array
+    protected function request(string $method, string $uri, array $options = []): array
     {
+        if ($method !== 'GET' && isset($options['query']) && $options['query'] !== []) {
+            $uri .= '?' . http_build_query($options['query']);
+        }
+
         $response = match ($method) {
             'GET' => $this->client()->get($uri, $options['query'] ?? []),
             'POST' => $this->client()->post($uri, $options['json'] ?? []),
@@ -122,7 +112,7 @@ abstract class AbstractHttpPecClient implements PecClient
         throw new RuntimeException($message);
     }
 
-    private function messagePath(
+    protected function messagePath(
         string $messageUid,
         ?string $mailboxId,
         ?string $folderId,
@@ -131,7 +121,7 @@ abstract class AbstractHttpPecClient implements PecClient
         return $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity) . '/' . rawurlencode($messageUid);
     }
 
-    private function messagesBasePath(
+    protected function messagesBasePath(
         ?string $mailboxId,
         ?string $folderId,
         ?string $messageUidValidity
@@ -154,7 +144,7 @@ abstract class AbstractHttpPecClient implements PecClient
         );
     }
 
-    private function submissionPath(?string $mailboxId): string
+    protected function submissionPath(?string $mailboxId): string
     {
         $resolvedMailboxId = $mailboxId ?? $this->mailboxId;
 

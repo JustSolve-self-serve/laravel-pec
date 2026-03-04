@@ -4,6 +4,7 @@ namespace JustSolve\LegalmailPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
 use JustSolve\LegalmailPec\Contracts\PecClient;
+use JustSolve\LegalmailPec\Contracts\PecClientManager;
 use JustSolve\LegalmailPec\Services\LegalmailProviderClient;
 use JustSolve\LegalmailPec\Tests\TestCase;
 use RuntimeException;
@@ -71,15 +72,20 @@ class LegalmailProviderClientTest extends TestCase
             '*' => Http::response(['updated' => true], 200),
         ]);
 
-        $client = $this->app->make(PecClient::class);
-        $response = $client->updateMessage('42', ['status' => 'read']);
+        $manager = $this->app->make(PecClientManager::class);
+        /** @var LegalmailProviderClient $client */
+        $client = $manager->driver('legalmail');
+
+        $this->assertInstanceOf(LegalmailProviderClient::class, $client);
+
+        $response = $client->updateMessage('42', true);
 
         $this->assertSame(['updated' => true], $response);
 
         Http::assertSent(function ($request): bool {
             return $request->method() === 'PUT'
                 && str_contains($request->url(), '/mailbox-1/folders/folder-1/messages/999/42')
-                && $request['status'] === 'read';
+                && (str_contains($request->url(), 'seen=1') || str_contains($request->url(), 'seen=true'));
         });
     }
 

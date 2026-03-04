@@ -90,7 +90,9 @@ $massivaClient = pec_client('openapi_pec_massiva');
 
 ### listMessages
 
-`GET /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}`
+Driver endpoints:
+- `legalmail`: `GET /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}`
+- `openapi_pec_massiva`: `GET /inbox`
 
 ```php
 $response = $client->listMessages(['limit' => 10]);
@@ -109,7 +111,9 @@ $response = $client->listMessages(
 
 ### getMessage
 
-`GET /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}`
+Driver endpoints:
+- `legalmail`: `GET /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}`
+- `openapi_pec_massiva`: `GET /inbox/{messageUId}`
 
 ```php
 $response = $client->getMessage('message-uid');
@@ -117,7 +121,9 @@ $response = $client->getMessage('message-uid');
 
 ### createSubmission
 
-`POST /{mailboxId}/submissions`
+Driver endpoints:
+- `legalmail`: `POST /{mailboxId}/submissions`
+- `openapi_pec_massiva`: `POST /send`
 
 ```php
 $response = $client->createSubmission([
@@ -128,17 +134,20 @@ $response = $client->createSubmission([
 
 ### updateMessage
 
-`PUT /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}`
+Legalmail only:
+
+`PUT /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}?seen={0|1}`
 
 ```php
-$response = $client->updateMessage('message-uid', [
-    'status' => 'read',
-]);
+$legalmailClient = app(\JustSolve\LegalmailPec\Contracts\PecClientManager::class)->driver('legalmail');
+$response = $legalmailClient->updateMessage('message-uid', true);
 ```
 
 ### deleteMessage
 
-`DELETE /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}`
+Driver endpoints:
+- `legalmail`: `DELETE /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}`
+- `openapi_pec_massiva`: `DELETE /inbox/{messageUId}`
 
 ```php
 $deleted = $client->deleteMessage('message-uid');

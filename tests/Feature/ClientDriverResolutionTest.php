@@ -35,7 +35,8 @@ class ClientDriverResolutionTest extends TestCase
 
         $client->listMessages();
 
-        Http::assertSent(fn ($request): bool => str_starts_with($request->url(), 'https://openapi.example.test/'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'GET'
+            && str_starts_with($request->url(), 'https://openapi.example.test/inbox'));
     }
 
     public function test_it_throws_for_unsupported_driver(): void
@@ -58,5 +59,30 @@ class ClientDriverResolutionTest extends TestCase
 
         $this->assertInstanceOf(LegalmailProviderClient::class, $legalmailClient);
         $this->assertInstanceOf(OpenApiPecMassivaProviderClient::class, $openApiClient);
+    }
+
+    public function test_openapi_pec_massiva_uses_its_provider_specific_uris(): void
+    {
+        Http::fake([
+            '*' => Http::response(['ok' => true], 200),
+        ]);
+
+        /** @var PecClientManager $manager */
+        $manager = $this->app->make(PecClientManager::class);
+        $client = $manager->driver('openapi_pec_massiva');
+
+        $client->listMessages();
+        $client->getMessage('message-1');
+        $client->createSubmission(['subject' => 'Hello']);
+        $client->deleteMessage('message-1');
+
+        Http::assertSent(fn ($request): bool => $request->method() === 'GET'
+            && str_starts_with($request->url(), 'https://openapi.example.test/inbox'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'GET'
+            && str_starts_with($request->url(), 'https://openapi.example.test/inbox/message-1'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'POST'
+            && str_starts_with($request->url(), 'https://openapi.example.test/send'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'DELETE'
+            && str_starts_with($request->url(), 'https://openapi.example.test/inbox/message-1'));
     }
 }
