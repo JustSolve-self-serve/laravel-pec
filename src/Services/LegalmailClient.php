@@ -10,7 +10,7 @@ use JustSolve\LaravelPec\Contracts\PecClient;
 use JustSolve\LaravelPec\Contracts\RequestHeaders;
 use RuntimeException;
 
-abstract class AbstractHttpPecClient implements PecClient
+class LegalmailClient implements PecClient
 {
     /**
      * @param array<string, string> $headers
@@ -79,6 +79,20 @@ abstract class AbstractHttpPecClient implements PecClient
         ]);
 
         return true;
+    }
+
+    public function updateMessage(
+        string $messageUid,
+        bool $seen,
+        ?string $mailboxId = null,
+        ?string $folderId = null,
+        ?string $messageUidValidity = null
+    ): array {
+        return $this->request(
+            'PUT',
+            $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity),
+            ['query' => ['seen' => $seen]]
+        );
     }
 
     /**

@@ -69,32 +69,18 @@ OPENAPI_PEC_MASSIVA_TIMEOUT=20
 Resolve via container:
 
 ```php
-use JustSolve\LaravelPec\Contracts\PecClient;
-use JustSolve\LaravelPec\Contracts\PecClientManager;
+use JustSolve\LaravelPec\Services\LegalmailClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
 
-// Default driver from config(pec.default)
-$client = app(PecClient::class);
-
-// Explicit driver selection at runtime
-$manager = app(PecClientManager::class);
-$legalmailClient = $manager->driver('legalmail');
-$massivaClient = $manager->driver('openapi_pec_massiva');
+$legalmailClient = app(LegalmailClient::class);
+$openApiClient = app(OpenApiPecMassivaClient::class);
 ```
 
-Use facade:
+Or use helpers:
 
 ```php
-use JustSolve\LaravelPec\Facades\Pec;
-
-Pec::createSubmission(['subject' => 'Hello']); // default driver
-Pec::driver('openapi_pec_massiva')->createSubmission(['subject' => 'Hello']); // explicit driver
-```
-
-Or use helper:
-
-```php
-$client = pec_client(); // default driver
-$massivaClient = pec_client('openapi_pec_massiva');
+$legalmailClient = legalmail_client();
+$openApiClient = openapi_pec_massiva_client();
 ```
 
 ### listMessages
@@ -112,8 +98,7 @@ OpenAPI custom headers model (for `openapi_pec_massiva` list/get/delete):
 ```php
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
 
-$openApiClient = app(\JustSolve\LaravelPec\Contracts\PecClientManager::class)
-    ->driver('openapi_pec_massiva');
+$openApiClient = app(\JustSolve\LaravelPec\Services\OpenApiPecMassivaClient::class);
 
 $headers = new OpenapiHeaders('openapi-user', 'openapi-pass');
 $response = $openApiClient->listMessages(headers: $headers);
@@ -160,8 +145,7 @@ use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
 
-$openApiClient = app(\JustSolve\LaravelPec\Contracts\PecClientManager::class)
-    ->driver('openapi_pec_massiva');
+$openApiClient = app(\JustSolve\LaravelPec\Services\OpenApiPecMassivaClient::class);
 
 $payload = new OpenapiCreateSubmissionPayload(
     sender: 'sender@example.test',
@@ -186,7 +170,7 @@ Legalmail only:
 `PUT /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}?seen={0|1}`
 
 ```php
-$legalmailClient = app(\JustSolve\LaravelPec\Contracts\PecClientManager::class)->driver('legalmail');
+$legalmailClient = app(\JustSolve\LaravelPec\Services\LegalmailClient::class);
 $response = $legalmailClient->updateMessage('message-uid', true);
 ```
 

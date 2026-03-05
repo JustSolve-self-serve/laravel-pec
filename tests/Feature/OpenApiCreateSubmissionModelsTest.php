@@ -8,7 +8,7 @@ use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
-use JustSolve\LaravelPec\Services\OpenApiPecMassivaProviderClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class OpenApiCreateSubmissionModelsTest extends TestCase
@@ -102,8 +102,7 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
             ], 201),
         ]);
 
-        $manager = $this->app->make(\JustSolve\LaravelPec\Contracts\PecClientManager::class);
-        $client = $manager->driver('openapi_pec_massiva');
+        $client = $this->app->make(OpenApiPecMassivaClient::class);
 
         $payload = OpenapiCreateSubmissionPayload::fromArray([
             'sender' => 'sender@example.test',
@@ -143,10 +142,7 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
             '*' => Http::response(['ok' => true], 200),
         ]);
 
-        $manager = $this->app->make(\JustSolve\LaravelPec\Contracts\PecClientManager::class);
-        $client = $manager->driver('openapi_pec_massiva');
-
-        $this->assertInstanceOf(OpenApiPecMassivaProviderClient::class, $client);
+        $client = $this->app->make(OpenApiPecMassivaClient::class);
 
         $headers = new OpenapiHeaders('openapi-user', 'openapi-pass');
 

@@ -1,21 +1,23 @@
 <?php
 
+use JustSolve\LaravelPec\Services\LegalmailClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
 
-use JustSolve\LaravelPec\Contracts\PecClient;
-use JustSolve\LaravelPec\Contracts\PecClientManager;
-
-if (! function_exists('pec_client')) {
-    function pec_client(?string $driver = null): PecClient
+if (! function_exists('legalmail_client')) {
+    function legalmail_client(): LegalmailClient
     {
-        if ($driver !== null) {
-            /** @var PecClientManager $manager */
-            $manager = app(PecClientManager::class);
+        /** @var LegalmailClient $client */
+        $client = app(LegalmailClient::class);
 
-            return $manager->driver($driver);
-        }
+        return $client;
+    }
+}
 
-        /** @var PecClient $client */
-        $client = app(PecClient::class);
+if (! function_exists('openapi_pec_massiva_client')) {
+    function openapi_pec_massiva_client(): OpenApiPecMassivaClient
+    {
+        /** @var OpenApiPecMassivaClient $client */
+        $client = app(OpenApiPecMassivaClient::class);
 
         return $client;
     }

@@ -3,62 +3,41 @@
 namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
-use JustSolve\LaravelPec\Contracts\PecClient;
-use JustSolve\LaravelPec\Contracts\PecClientManager;
-use JustSolve\LaravelPec\Services\LegalmailProviderClient;
-use JustSolve\LaravelPec\Services\OpenApiPecMassivaProviderClient;
+use JustSolve\LaravelPec\Services\LegalmailClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
-use RuntimeException;
 
 class ClientDriverResolutionTest extends TestCase
 {
-    public function test_it_uses_legalmail_driver_by_default(): void
+    public function test_it_can_resolve_both_clients_directly_from_container(): void
     {
-        $client = $this->app->make(PecClient::class);
+        $legalmailClient = $this->app->make(LegalmailClient::class);
+        $openApiClient = $this->app->make(OpenApiPecMassivaClient::class);
 
-        $this->assertInstanceOf(LegalmailProviderClient::class, $client);
+        $this->assertInstanceOf(LegalmailClient::class, $legalmailClient);
+        $this->assertInstanceOf(OpenApiPecMassivaClient::class, $openApiClient);
     }
 
-    public function test_it_uses_openapi_pec_massiva_driver_when_configured(): void
+    public function test_legalmail_client_uses_its_provider_specific_uris(): void
     {
-        $this->app['config']->set('pec.default', 'openapi_pec_massiva');
-        $this->app->forgetInstance(PecClient::class);
-        $this->app->forgetInstance(PecClientManager::class);
-
         Http::fake([
-            '*' => Http::response(['data' => []], 200),
+            '*' => Http::response(['ok' => true], 200),
         ]);
 
-        $client = $this->app->make(PecClient::class);
-
-        $this->assertInstanceOf(OpenApiPecMassivaProviderClient::class, $client);
-
+        $client = $this->app->make(LegalmailClient::class);
         $client->listMessages();
+        $client->getMessage('message-1');
+        $client->createSubmission(['subject' => 'Hello']);
+        $client->deleteMessage('message-1');
 
         Http::assertSent(fn ($request): bool => $request->method() === 'GET'
-            && str_starts_with($request->url(), 'https://openapi.example.test/inbox'));
-    }
-
-    public function test_it_throws_for_unsupported_driver(): void
-    {
-        $this->app['config']->set('pec.default', 'unknown_driver');
-        $this->app->forgetInstance(PecClientManager::class);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Unsupported pec driver [unknown_driver].');
-
-        $this->app->make(PecClientManager::class)->default();
-    }
-
-    public function test_it_can_resolve_both_drivers_with_manager(): void
-    {
-        $manager = $this->app->make(PecClientManager::class);
-
-        $legalmailClient = $manager->driver('legalmail');
-        $openApiClient = $manager->driver('openapi_pec_massiva');
-
-        $this->assertInstanceOf(LegalmailProviderClient::class, $legalmailClient);
-        $this->assertInstanceOf(OpenApiPecMassivaProviderClient::class, $openApiClient);
+            && str_starts_with($request->url(), 'https://sandbox.example.test/mailbox-1/folders/folder-1/messages/999'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'GET'
+            && str_starts_with($request->url(), 'https://sandbox.example.test/mailbox-1/folders/folder-1/messages/999/message-1'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'POST'
+            && str_starts_with($request->url(), 'https://sandbox.example.test/mailbox-1/submissions'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'DELETE'
+            && str_starts_with($request->url(), 'https://sandbox.example.test/mailbox-1/folders/folder-1/messages/999/message-1'));
     }
 
     public function test_openapi_pec_massiva_uses_its_provider_specific_uris(): void
@@ -67,9 +46,7 @@ class ClientDriverResolutionTest extends TestCase
             '*' => Http::response(['ok' => true], 200),
         ]);
 
-        /** @var PecClientManager $manager */
-        $manager = $this->app->make(PecClientManager::class);
-        $client = $manager->driver('openapi_pec_massiva');
+        $client = $this->app->make(OpenApiPecMassivaClient::class);
 
         $client->listMessages();
         $client->getMessage('message-1');

@@ -2,7 +2,8 @@
 
 namespace JustSolve\LaravelPec\Tests\Integration;
 
-use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Services\LegalmailClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class PecSandboxIntegrationTest extends TestCase
@@ -13,7 +14,7 @@ class PecSandboxIntegrationTest extends TestCase
             $this->markTestSkipped('Integration test disabled. Set LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true to enable.');
         }
 
-        $client = $this->app->make(PecClient::class);
+        $client = $this->integrationClient();
         $response = $client->listMessages();
 
         $this->assertIsArray($response);
@@ -31,9 +32,20 @@ class PecSandboxIntegrationTest extends TestCase
             $this->markTestSkipped('LEGALMAIL_PEC_TEST_MESSAGE_UID not set.');
         }
 
-        $client = $this->app->make(PecClient::class);
+        $client = $this->integrationClient();
         $response = $client->getMessage($messageUid);
 
         $this->assertIsArray($response);
+    }
+
+    private function integrationClient(): LegalmailClient|OpenApiPecMassivaClient
+    {
+        $driver = (string) env('LEGALMAIL_PEC_DRIVER', 'legalmail');
+
+        if ($driver === 'openapi_pec_massiva') {
+            return $this->app->make(OpenApiPecMassivaClient::class);
+        }
+
+        return $this->app->make(LegalmailClient::class);
     }
 }

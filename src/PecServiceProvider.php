@@ -3,9 +3,8 @@
 namespace JustSolve\LaravelPec;
 
 use Illuminate\Support\ServiceProvider;
-use JustSolve\LaravelPec\Contracts\PecClient;
-use JustSolve\LaravelPec\Contracts\PecClientManager as PecClientManagerContract;
-use JustSolve\LaravelPec\Services\PecClientManager;
+use JustSolve\LaravelPec\Services\LegalmailClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
 
 class PecServiceProvider extends ServiceProvider
 {
@@ -13,16 +12,11 @@ class PecServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/pec.php', 'pec');
 
-        $this->app->singleton(PecClientManagerContract::class, function () {
-            return new PecClientManager((array) config('pec', []));
-        });
-
-        $this->app->singleton(PecClient::class, function () {
-            /** @var PecClientManagerContract $manager */
-            $manager = $this->app->make(PecClientManagerContract::class);
-
-            return $manager->default();
-        });
+        $this->app->singleton(LegalmailClient::class, fn (): LegalmailClient => $this->makeLegalmailClient());
+        $this->app->singleton(
+            OpenApiPecMassivaClient::class,
+            fn (): OpenApiPecMassivaClient => $this->makeOpenApiPecMassivaClient()
+        );
     }
 
     public function boot(): void
@@ -30,5 +24,49 @@ class PecServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/pec.php' => config_path('pec.php'),
         ], 'pec-config');
+    }
+
+    private function makeLegalmailClient(): LegalmailClient
+    {
+        $config = $this->driverConfig('legalmail');
+
+        return new LegalmailClient(
+            baseUrl: (string) ($config['base_url'] ?? ''),
+            token: isset($config['token']) ? (string) $config['token'] : null,
+            timeout: (int) ($config['timeout'] ?? 20),
+            mailboxId: config('pec.mailbox_id') !== null ? (string) config('pec.mailbox_id') : null,
+            folderId: config('pec.folder_id') !== null ? (string) config('pec.folder_id') : null,
+            messageUidValidity: config('pec.message_uid_validity') !== null ? (string) config('pec.message_uid_validity') : null,
+            headers: (array) ($config['headers'] ?? []),
+        );
+    }
+
+    private function makeOpenApiPecMassivaClient(): OpenApiPecMassivaClient
+    {
+        $config = $this->driverConfig('openapi_pec_massiva');
+
+        return new OpenApiPecMassivaClient(
+            baseUrl: (string) ($config['base_url'] ?? ''),
+            token: isset($config['token']) ? (string) $config['token'] : null,
+            timeout: (int) ($config['timeout'] ?? 20),
+            mailboxId: config('pec.mailbox_id') !== null ? (string) config('pec.mailbox_id') : null,
+            folderId: config('pec.folder_id') !== null ? (string) config('pec.folder_id') : null,
+            messageUidValidity: config('pec.message_uid_validity') !== null ? (string) config('pec.message_uid_validity') : null,
+            headers: (array) ($config['headers'] ?? []),
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function driverConfig(string $driver): array
+    {
+        $drivers = config('pec.drivers');
+
+        if (is_array($drivers)) {
+            return (array) ($drivers[$driver] ?? []);
+        }
+
+        return (array) config("pec.{$driver}", []);
     }
 }
