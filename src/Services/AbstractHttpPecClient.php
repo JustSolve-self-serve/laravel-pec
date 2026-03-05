@@ -1,11 +1,12 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Services;
+namespace JustSolve\LaravelPec\Services;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use JustSolve\LegalmailPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Contracts\CreateSubmissionPayload;
+use JustSolve\LaravelPec\Contracts\PecClient;
 use RuntimeException;
 
 abstract class AbstractHttpPecClient implements PecClient
@@ -42,8 +43,12 @@ abstract class AbstractHttpPecClient implements PecClient
         return $this->request('GET', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity));
     }
 
-    public function createSubmission(array $payload, ?string $mailboxId = null): array
+    public function createSubmission(array|CreateSubmissionPayload $payload, ?string $mailboxId = null): array
     {
+        if ($payload instanceof CreateSubmissionPayload) {
+            $payload = $payload->toArray();
+        }
+
         return $this->request('POST', $this->submissionPath($mailboxId), ['json' => $payload]);
     }
 

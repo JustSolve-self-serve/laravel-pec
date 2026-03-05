@@ -1,11 +1,11 @@
 <?php
 
-namespace JustSolve\LegalmailPec;
+namespace JustSolve\LaravelPec;
 
 use Illuminate\Support\ServiceProvider;
-use JustSolve\LegalmailPec\Contracts\PecClient;
-use JustSolve\LegalmailPec\Contracts\PecClientManager as PecClientManagerContract;
-use JustSolve\LegalmailPec\Services\PecClientManager;
+use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Contracts\PecClientManager as PecClientManagerContract;
+use JustSolve\LaravelPec\Services\PecClientManager;
 
 class PecServiceProvider extends ServiceProvider
 {

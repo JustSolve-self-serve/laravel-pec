@@ -1,8 +1,8 @@
 <?php
 
 
-use JustSolve\LegalmailPec\Contracts\PecClient;
-use JustSolve\LegalmailPec\Contracts\PecClientManager;
+use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Contracts\PecClientManager;
 
 if (! function_exists('pec_client')) {
     function pec_client(?string $driver = null): PecClient

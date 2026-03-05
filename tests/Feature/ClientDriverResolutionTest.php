@@ -1,13 +1,13 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Tests\Feature;
+namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
-use JustSolve\LegalmailPec\Contracts\PecClient;
-use JustSolve\LegalmailPec\Contracts\PecClientManager;
-use JustSolve\LegalmailPec\Services\LegalmailProviderClient;
-use JustSolve\LegalmailPec\Services\OpenApiPecMassivaProviderClient;
-use JustSolve\LegalmailPec\Tests\TestCase;
+use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Contracts\PecClientManager;
+use JustSolve\LaravelPec\Services\LegalmailProviderClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaProviderClient;
+use JustSolve\LaravelPec\Tests\TestCase;
 use RuntimeException;
 
 class ClientDriverResolutionTest extends TestCase

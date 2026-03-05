@@ -69,8 +69,8 @@ OPENAPI_PEC_MASSIVA_TIMEOUT=20
 Resolve via container:
 
 ```php
-use JustSolve\LegalmailPec\Contracts\PecClient;
-use JustSolve\LegalmailPec\Contracts\PecClientManager;
+use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Contracts\PecClientManager;
 
 // Default driver from config(pec.default)
 $client = app(PecClient::class);
@@ -84,7 +84,7 @@ $massivaClient = $manager->driver('openapi_pec_massiva');
 Use facade:
 
 ```php
-use JustSolve\LegalmailPec\Facades\Pec;
+use JustSolve\LaravelPec\Facades\Pec;
 
 Pec::createSubmission(['subject' => 'Hello']); // default driver
 Pec::driver('openapi_pec_massiva')->createSubmission(['subject' => 'Hello']); // explicit driver
@@ -141,6 +141,32 @@ $response = $client->createSubmission([
 ]);
 ```
 
+OpenAPI typed models (for `openapi_pec_massiva`):
+
+```php
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
+
+$openApiClient = app(\JustSolve\LaravelPec\Contracts\PecClientManager::class)
+    ->driver('openapi_pec_massiva');
+
+$payload = new OpenapiCreateSubmissionPayload(
+    sender: 'sender@example.test',
+    recipient: ['recipient@example.test'],
+    subject: 'Test PEC',
+    body: 'Message body',
+    attachments: [
+        new OpenapiAttachment('invoice.pdf', base64_encode('file-content')),
+    ],
+    username: 'api-username',
+    password: 'api-password',
+);
+
+$response = $openApiClient->createSubmission($payload); // any CreateSubmissionPayload implementation
+$typedResponse = OpenapiCreateSubmissionResponse::fromArray($response);
+```
+
 ### updateMessage
 
 Legalmail only:
@@ -148,7 +174,7 @@ Legalmail only:
 `PUT /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}?seen={0|1}`
 
 ```php
-$legalmailClient = app(\JustSolve\LegalmailPec\Contracts\PecClientManager::class)->driver('legalmail');
+$legalmailClient = app(\JustSolve\LaravelPec\Contracts\PecClientManager::class)->driver('legalmail');
 $response = $legalmailClient->updateMessage('message-uid', true);
 ```
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Tests\Integration;
+namespace JustSolve\LaravelPec\Tests\Integration;
 
-use JustSolve\LegalmailPec\Contracts\PecClient;
-use JustSolve\LegalmailPec\Tests\TestCase;
+use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Tests\TestCase;
 
 class PecSandboxIntegrationTest extends TestCase
 {

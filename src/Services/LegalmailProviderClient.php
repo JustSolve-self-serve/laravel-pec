@@ -1,6 +1,6 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Services;
+namespace JustSolve\LaravelPec\Services;
 
 class LegalmailProviderClient extends AbstractHttpPecClient
 {

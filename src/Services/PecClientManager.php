@@ -1,9 +1,9 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Services;
+namespace JustSolve\LaravelPec\Services;
 
-use JustSolve\LegalmailPec\Contracts\PecClient;
-use JustSolve\LegalmailPec\Contracts\PecClientManager as PecClientManagerContract;
+use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Contracts\PecClientManager as PecClientManagerContract;
 use RuntimeException;
 
 class PecClientManager implements PecClientManagerContract

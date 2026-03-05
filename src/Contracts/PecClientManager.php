@@ -1,6 +1,6 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Contracts;
+namespace JustSolve\LaravelPec\Contracts;
 
 interface PecClientManager
 {

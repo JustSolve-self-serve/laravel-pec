@@ -1,12 +1,12 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Tests\Feature;
+namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
-use JustSolve\LegalmailPec\Facades\Pec;
-use JustSolve\LegalmailPec\Services\LegalmailProviderClient;
-use JustSolve\LegalmailPec\Services\OpenApiPecMassivaProviderClient;
-use JustSolve\LegalmailPec\Tests\TestCase;
+use JustSolve\LaravelPec\Facades\Pec;
+use JustSolve\LaravelPec\Services\LegalmailProviderClient;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaProviderClient;
+use JustSolve\LaravelPec\Tests\TestCase;
 
 class PecFacadeTest extends TestCase
 {

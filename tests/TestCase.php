@@ -1,8 +1,8 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Tests;
+namespace JustSolve\LaravelPec\Tests;
 
-use JustSolve\LegalmailPec\PecServiceProvider;
+use JustSolve\LaravelPec\PecServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra

@@ -1,6 +1,6 @@
 <?php
 
-namespace JustSolve\LegalmailPec\Contracts;
+namespace JustSolve\LaravelPec\Contracts;
 
 interface PecClient
 {
@@ -32,10 +32,10 @@ interface PecClient
     /**
      * Create a resource in the provider.
      *
-     * @param array<string, mixed> $payload
+     * @param array<string, mixed>|CreateSubmissionPayload $payload
      * @return array<string, mixed>
      */
-    public function createSubmission(array $payload, ?string $mailboxId = null): array;
+    public function createSubmission(array|CreateSubmissionPayload $payload, ?string $mailboxId = null): array;
 
     /**
      * Delete a resource in the provider.
