@@ -33,9 +33,9 @@ class PecServiceProvider extends ServiceProvider
         return new LegalmailClient(
             baseUrl: (string) ($config['base_url'] ?? ''),
             token: isset($config['token']) ? (string) $config['token'] : null,
-            mailboxId: config('pec.mailbox_id') !== null ? (string) config('pec.mailbox_id') : null,
-            folderId: config('pec.folder_id') !== null ? (string) config('pec.folder_id') : null,
-            messageUidValidity: config('pec.message_uid_validity') !== null ? (string) config('pec.message_uid_validity') : null,
+            mailboxId: isset($config['mailbox_id']) ? (string) $config['mailbox_id'] : null,
+            folderId: isset($config['folder_id']) ? (string) $config['folder_id'] : null,
+            messageUidValidity: isset($config['message_uid_validity']) ? (string) $config['message_uid_validity'] : null,
             headers: (array) ($config['headers'] ?? []),
         );
     }

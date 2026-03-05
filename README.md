@@ -47,15 +47,12 @@ php artisan vendor:publish --tag=pec-config
 Set these variables in your app `.env`:
 
 ```env
-LEGALMAIL_PEC_DRIVER=legalmail # legalmail|openapi_pec_massiva
-
-LEGALMAIL_PEC_MAILBOX_ID=your-mailbox-id
-LEGALMAIL_PEC_FOLDER_ID=your-folder-id
-LEGALMAIL_PEC_MESSAGE_UID_VALIDITY=your-message-uid-validity
-
 # Driver: legalmail
 LEGALMAIL_PEC_BASE_URL=https://your-legalmail-base-url
 LEGALMAIL_PEC_TOKEN=your-legalmail-token
+LEGALMAIL_PEC_MAILBOX_ID=your-mailbox-id
+LEGALMAIL_PEC_FOLDER_ID=your-folder-id
+LEGALMAIL_PEC_MESSAGE_UID_VALIDITY=your-message-uid-validity
 
 # Driver: openapi_pec_massiva
 OPENAPI_PEC_MASSIVA_BASE_URL=https://your-openapi-base-url
