@@ -5,12 +5,11 @@ namespace JustSolve\LaravelPec\Services;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use JustSolve\LaravelPec\Contracts\CreateSubmissionPayload;
-use JustSolve\LaravelPec\Contracts\PecClient;
-use JustSolve\LaravelPec\Contracts\RequestHeaders;
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
 use RuntimeException;
 
-class OpenApiPecMassivaClient implements PecClient
+class OpenApiPecMassivaClient
 {
     /**
      * @param array<string, string> $headers
@@ -31,7 +30,7 @@ class OpenApiPecMassivaClient implements PecClient
         ?string $mailboxId = null,
         ?string $folderId = null,
         ?string $messageUidValidity = null,
-        array|RequestHeaders|null $headers = null
+        array|OpenapiHeaders|null $headers = null
     ): array {
         return $this->request('GET', $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity), [
             'query' => $query,
@@ -44,7 +43,7 @@ class OpenApiPecMassivaClient implements PecClient
         ?string $mailboxId = null,
         ?string $folderId = null,
         ?string $messageUidValidity = null,
-        array|RequestHeaders|null $headers = null
+        array|OpenapiHeaders|null $headers = null
     ): array {
         return $this->request('GET', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity), [
             'headers' => $this->normalizeHeaders($headers),
@@ -52,12 +51,12 @@ class OpenApiPecMassivaClient implements PecClient
     }
 
     public function createSubmission(
-        array|CreateSubmissionPayload $payload,
+        array|OpenapiCreateSubmissionPayload $payload,
         ?string $mailboxId = null,
-        array|RequestHeaders|null $headers = null
+        array|OpenapiHeaders|null $headers = null
     ): array
     {
-        if ($payload instanceof CreateSubmissionPayload) {
+        if ($payload instanceof OpenapiCreateSubmissionPayload) {
             $payload = $payload->toArray();
         }
 
@@ -72,7 +71,7 @@ class OpenApiPecMassivaClient implements PecClient
         ?string $mailboxId = null,
         ?string $folderId = null,
         ?string $messageUidValidity = null,
-        array|RequestHeaders|null $headers = null
+        array|OpenapiHeaders|null $headers = null
     ): bool {
         $this->request('DELETE', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity), [
             'headers' => $this->normalizeHeaders($headers),
@@ -141,12 +140,12 @@ class OpenApiPecMassivaClient implements PecClient
     }
 
     /**
-     * @param array<string, string>|RequestHeaders|null $headers
+     * @param array<string, string>|OpenapiHeaders|null $headers
      * @return array<string, string>
      */
-    private function normalizeHeaders(array|RequestHeaders|null $headers): array
+    private function normalizeHeaders(array|OpenapiHeaders|null $headers): array
     {
-        if ($headers instanceof RequestHeaders) {
+        if ($headers instanceof OpenapiHeaders) {
             return $headers->toArray();
         }
 

@@ -3,9 +3,8 @@
 namespace JustSolve\LaravelPec\OpenApi\Models;
 
 use InvalidArgumentException;
-use JustSolve\LaravelPec\Contracts\CreateSubmissionResponse;
 
-class OpenapiCreateSubmissionResponse implements CreateSubmissionResponse
+class OpenapiCreateSubmissionResponse
 {
     public function __construct(
         public readonly bool $success,

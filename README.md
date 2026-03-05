@@ -159,7 +159,7 @@ $payload = new OpenapiCreateSubmissionPayload(
     password: 'api-password',
 );
 
-$response = $openApiClient->createSubmission($payload); // any CreateSubmissionPayload implementation
+$response = $openApiClient->createSubmission($payload); // accepts array or OpenapiCreateSubmissionPayload
 $typedResponse = OpenapiCreateSubmissionResponse::fromArray($response);
 ```
 

@@ -3,9 +3,8 @@
 namespace JustSolve\LaravelPec\OpenApi\Models;
 
 use InvalidArgumentException;
-use JustSolve\LaravelPec\Contracts\RequestHeaders;
 
-class OpenapiHeaders implements RequestHeaders
+class OpenapiHeaders
 {
     public function __construct(
         public readonly string $username,

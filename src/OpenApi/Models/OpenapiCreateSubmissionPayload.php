@@ -3,9 +3,8 @@
 namespace JustSolve\LaravelPec\OpenApi\Models;
 
 use InvalidArgumentException;
-use JustSolve\LaravelPec\Contracts\CreateSubmissionPayload;
 
-class OpenapiCreateSubmissionPayload implements CreateSubmissionPayload
+class OpenapiCreateSubmissionPayload
 {
     /**
      * @param string|array<int, string> $recipient
