@@ -4,8 +4,8 @@ namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
-use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
+use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class ClientDriverResolutionTest extends TestCase
@@ -13,10 +13,10 @@ class ClientDriverResolutionTest extends TestCase
     public function test_it_can_resolve_both_clients_directly_from_container(): void
     {
         $legalmailClient = $this->app->make(LegalmailClient::class);
-        $openApiClient = $this->app->make(OpenApiPecMassivaClient::class);
+        $openApiClient = $this->app->make(OpenapiPecMassivaClient::class);
 
         $this->assertInstanceOf(LegalmailClient::class, $legalmailClient);
-        $this->assertInstanceOf(OpenApiPecMassivaClient::class, $openApiClient);
+        $this->assertInstanceOf(OpenapiPecMassivaClient::class, $openApiClient);
     }
 
     public function test_legalmail_client_uses_its_provider_specific_uris(): void
@@ -52,7 +52,7 @@ class ClientDriverResolutionTest extends TestCase
             ], 200),
         ]);
 
-        $client = $this->app->make(OpenApiPecMassivaClient::class);
+        $client = $this->app->make(OpenapiPecMassivaClient::class);
 
         $client->listMessages();
         $client->getMessage('message-1');

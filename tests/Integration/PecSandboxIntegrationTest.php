@@ -3,7 +3,7 @@
 namespace JustSolve\LaravelPec\Tests\Integration;
 
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
-use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class PecSandboxIntegrationTest extends TestCase
@@ -38,12 +38,12 @@ class PecSandboxIntegrationTest extends TestCase
         $this->assertIsArray($response);
     }
 
-    private function integrationClient(): LegalmailClient|OpenApiPecMassivaClient
+    private function integrationClient(): LegalmailClient|OpenapiPecMassivaClient
     {
         $driver = (string) env('LEGALMAIL_PEC_DRIVER', 'legalmail');
 
         if ($driver === 'openapi_pec_massiva') {
-            return $this->app->make(OpenApiPecMassivaClient::class);
+            return $this->app->make(OpenapiPecMassivaClient::class);
         }
 
         return $this->app->make(LegalmailClient::class);

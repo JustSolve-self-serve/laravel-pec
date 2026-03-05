@@ -1,6 +1,6 @@
 <?php
 
-namespace JustSolve\LaravelPec\OpenApi\Models;
+namespace JustSolve\LaravelPec\Openapi\Models;
 
 use InvalidArgumentException;
 

@@ -4,7 +4,7 @@ namespace JustSolve\LaravelPec;
 
 use Illuminate\Support\ServiceProvider;
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
-use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 
 class PecServiceProvider extends ServiceProvider
 {
@@ -14,8 +14,8 @@ class PecServiceProvider extends ServiceProvider
 
         $this->app->singleton(LegalmailClient::class, fn (): LegalmailClient => $this->makeLegalmailClient());
         $this->app->singleton(
-            OpenApiPecMassivaClient::class,
-            fn (): OpenApiPecMassivaClient => $this->makeOpenApiPecMassivaClient()
+            OpenapiPecMassivaClient::class,
+            fn (): OpenapiPecMassivaClient => $this->makeOpenapiPecMassivaClient()
         );
     }
 
@@ -40,11 +40,11 @@ class PecServiceProvider extends ServiceProvider
         );
     }
 
-    private function makeOpenApiPecMassivaClient(): OpenApiPecMassivaClient
+    private function makeOpenapiPecMassivaClient(): OpenapiPecMassivaClient
     {
         $config = $this->driverConfig('openapi_pec_massiva');
 
-        return new OpenApiPecMassivaClient(
+        return new OpenapiPecMassivaClient(
             baseUrl: (string) ($config['base_url'] ?? ''),
             token: isset($config['token']) ? (string) $config['token'] : null,
             headers: (array) ($config['headers'] ?? []),

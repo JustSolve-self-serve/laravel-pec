@@ -68,10 +68,10 @@ Resolve via container:
 
 ```php
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
-use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 
 $legalmailClient = app(LegalmailClient::class);
-$openApiClient = app(OpenApiPecMassivaClient::class);
+$openApiClient = app(OpenapiPecMassivaClient::class);
 ```
 
 Or use helpers:
@@ -94,9 +94,9 @@ $response = $client->listMessages(['limit' => 10]);
 OpenAPI custom headers model (for `openapi_pec_massiva` list/get/delete):
 
 ```php
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 
-$openApiClient = app(\JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient::class);
+$openApiClient = app(\JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient::class);
 
 $headers = new OpenapiHeaders('openapi-user', 'openapi-pass');
 $response = $openApiClient->listMessages(headers: $headers);
@@ -140,10 +140,10 @@ $response = $legalmailClient->createSubmission([
 OpenAPI typed models (for `openapi_pec_massiva`):
 
 ```php
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiAttachment;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 
-$openApiClient = app(\JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient::class);
+$openApiClient = app(\JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient::class);
 
 $payload = new OpenapiCreateSubmissionPayload(
     sender: 'sender@example.test',

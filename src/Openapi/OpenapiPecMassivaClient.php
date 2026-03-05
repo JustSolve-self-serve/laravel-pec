@@ -1,16 +1,16 @@
 <?php
 
-namespace JustSolve\LaravelPec\OpenApi;
+namespace JustSolve\LaravelPec\Openapi;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use RuntimeException;
 
-class OpenApiPecMassivaClient
+class OpenapiPecMassivaClient
 {
     /**
      * @param array<string, string> $headers

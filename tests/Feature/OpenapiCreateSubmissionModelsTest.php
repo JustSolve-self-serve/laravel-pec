@@ -4,14 +4,14 @@ namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
-use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiAttachment;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
+use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
-class OpenApiCreateSubmissionModelsTest extends TestCase
+class OpenapiCreateSubmissionModelsTest extends TestCase
 {
     public function test_it_serializes_payload_with_attachment_models(): void
     {
@@ -102,7 +102,7 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
             ], 201),
         ]);
 
-        $client = $this->app->make(OpenApiPecMassivaClient::class);
+        $client = $this->app->make(OpenapiPecMassivaClient::class);
 
         $payload = OpenapiCreateSubmissionPayload::fromArray([
             'sender' => 'sender@example.test',
@@ -140,7 +140,7 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
             '*' => Http::response(['ok' => true], 200),
         ]);
 
-        $client = $this->app->make(OpenApiPecMassivaClient::class);
+        $client = $this->app->make(OpenapiPecMassivaClient::class);
 
         $headers = new OpenapiHeaders('openapi-user', 'openapi-pass');
 
