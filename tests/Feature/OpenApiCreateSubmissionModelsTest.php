@@ -91,7 +91,7 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
         );
     }
 
-    public function test_openapi_client_works_with_payload_model_via_array_conversion(): void
+    public function test_openapi_client_returns_typed_create_submission_response(): void
     {
         Http::fake([
             '*' => Http::response([
@@ -116,9 +116,7 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
             'password' => 'api-password',
         ]);
 
-        $response = OpenapiCreateSubmissionResponse::fromArray(
-            $client->createSubmission($payload)
-        );
+        $response = $client->createSubmission($payload);
 
         $this->assertTrue($response->success);
         $this->assertSame('Queued', $response->message);

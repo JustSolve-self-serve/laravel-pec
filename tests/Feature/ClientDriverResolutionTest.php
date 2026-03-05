@@ -5,6 +5,7 @@ namespace JustSolve\LaravelPec\Tests\Feature;
 use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
 use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class ClientDriverResolutionTest extends TestCase
@@ -43,14 +44,27 @@ class ClientDriverResolutionTest extends TestCase
     public function test_openapi_pec_massiva_uses_its_provider_specific_uris(): void
     {
         Http::fake([
-            '*' => Http::response(['ok' => true], 200),
+            '*' => Http::response([
+                'success' => true,
+                'message' => 'Queued',
+                'message_id' => 'message-1',
+                'sent' => 1,
+            ], 200),
         ]);
 
         $client = $this->app->make(OpenApiPecMassivaClient::class);
 
         $client->listMessages();
         $client->getMessage('message-1');
-        $client->createSubmission(['subject' => 'Hello']);
+        $client->createSubmission(new OpenapiCreateSubmissionPayload(
+            sender: 'sender@example.test',
+            recipient: 'recipient@example.test',
+            subject: 'Hello',
+            body: 'Body',
+            attachments: [],
+            username: 'username',
+            password: 'password'
+        ));
         $client->deleteMessage('message-1');
 
         Http::assertSent(fn ($request): bool => $request->method() === 'GET'

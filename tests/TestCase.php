@@ -24,13 +24,11 @@ abstract class TestCase extends Orchestra
             'legalmail' => [
                 'base_url' => env('LEGALMAIL_PEC_BASE_URL', 'https://sandbox.example.test'),
                 'token' => env('LEGALMAIL_PEC_TOKEN', 'test-token'),
-                'timeout' => (int) env('LEGALMAIL_PEC_TIMEOUT', 20),
                 'headers' => [],
             ],
             'openapi_pec_massiva' => [
                 'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://openapi.example.test'),
                 'token' => env('OPENAPI_PEC_MASSIVA_TOKEN', 'openapi-token'),
-                'timeout' => (int) env('OPENAPI_PEC_MASSIVA_TIMEOUT', 20),
                 'headers' => [],
             ],
         ]);

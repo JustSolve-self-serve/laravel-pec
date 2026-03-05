@@ -15,7 +15,6 @@ class LegalmailClient
     public function __construct(
         private readonly string $baseUrl,
         private readonly ?string $token = null,
-        private readonly int $timeout = 20,
         private readonly ?string $mailboxId = null,
         private readonly ?string $folderId = null,
         private readonly ?string $messageUidValidity = null,
@@ -119,7 +118,6 @@ class LegalmailClient
 
         $client = Http::baseUrl(rtrim($this->baseUrl, '/'))
             ->acceptJson()
-            ->timeout($this->timeout)
             ->withHeaders($headers);
 
         if ($this->token !== null && $this->token !== '') {

@@ -56,12 +56,10 @@ LEGALMAIL_PEC_MESSAGE_UID_VALIDITY=your-message-uid-validity
 # Driver: legalmail
 LEGALMAIL_PEC_BASE_URL=https://your-legalmail-base-url
 LEGALMAIL_PEC_TOKEN=your-legalmail-token
-LEGALMAIL_PEC_TIMEOUT=20
 
 # Driver: openapi_pec_massiva
 OPENAPI_PEC_MASSIVA_BASE_URL=https://your-openapi-base-url
 OPENAPI_PEC_MASSIVA_TOKEN=your-openapi-token
-OPENAPI_PEC_MASSIVA_TIMEOUT=20
 ```
 
 ## Usage
@@ -132,7 +130,8 @@ Driver endpoints:
 - `openapi_pec_massiva`: `POST /send`
 
 ```php
-$response = $client->createSubmission([
+// legalmail
+$response = $legalmailClient->createSubmission([
     'subject' => 'Test PEC',
     'body' => 'Message body',
 ]);
@@ -143,7 +142,6 @@ OpenAPI typed models (for `openapi_pec_massiva`):
 ```php
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
-use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
 
 $openApiClient = app(\JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient::class);
 
@@ -159,8 +157,7 @@ $payload = new OpenapiCreateSubmissionPayload(
     password: 'api-password',
 );
 
-$response = $openApiClient->createSubmission($payload); // accepts array or OpenapiCreateSubmissionPayload
-$typedResponse = OpenapiCreateSubmissionResponse::fromArray($response);
+$typedResponse = $openApiClient->createSubmission($payload);
 ```
 
 ### updateMessage

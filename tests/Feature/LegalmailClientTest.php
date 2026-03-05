@@ -121,7 +121,6 @@ class LegalmailClientTest extends TestCase
         $client = new LegalmailClient(
             baseUrl: 'https://sandbox.example.test',
             token: 'token',
-            timeout: 20,
             mailboxId: null,
             folderId: null,
             messageUidValidity: null,

@@ -10,7 +10,6 @@ return [
         'legalmail' => [
             'base_url' => env('LEGALMAIL_PEC_BASE_URL', ''),
             'token' => env('LEGALMAIL_PEC_TOKEN'),
-            'timeout' => (int) env('LEGALMAIL_PEC_TIMEOUT', 20),
 
             // Optional extra headers required by the provider.
             'headers' => [
@@ -20,7 +19,6 @@ return [
         'openapi_pec_massiva' => [
             'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', ''),
             'token' => env('OPENAPI_PEC_MASSIVA_TOKEN'),
-            'timeout' => (int) env('OPENAPI_PEC_MASSIVA_TIMEOUT', 20),
             'headers' => [],
         ],
     ],

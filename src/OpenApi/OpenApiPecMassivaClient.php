@@ -6,6 +6,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
 use RuntimeException;
 
@@ -17,22 +18,15 @@ class OpenApiPecMassivaClient
     public function __construct(
         private readonly string $baseUrl,
         private readonly ?string $token = null,
-        private readonly int $timeout = 20,
-        private readonly ?string $mailboxId = null,
-        private readonly ?string $folderId = null,
-        private readonly ?string $messageUidValidity = null,
         private readonly array $headers = [],
     ) {
     }
 
     public function listMessages(
         array $query = [],
-        ?string $mailboxId = null,
-        ?string $folderId = null,
-        ?string $messageUidValidity = null,
-        array|OpenapiHeaders|null $headers = null
+        ?OpenapiHeaders $headers = null
     ): array {
-        return $this->request('GET', $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity), [
+        return $this->request('GET', $this->messagesBasePath(), [
             'query' => $query,
             'headers' => $this->normalizeHeaders($headers),
         ]);
@@ -40,40 +34,25 @@ class OpenApiPecMassivaClient
 
     public function getMessage(
         string $messageUid,
-        ?string $mailboxId = null,
-        ?string $folderId = null,
-        ?string $messageUidValidity = null,
-        array|OpenapiHeaders|null $headers = null
+        ?OpenapiHeaders $headers = null
     ): array {
-        return $this->request('GET', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity), [
+        return $this->request('GET', $this->messagePath($messageUid), [
             'headers' => $this->normalizeHeaders($headers),
         ]);
     }
 
-    public function createSubmission(
-        array|OpenapiCreateSubmissionPayload $payload,
-        ?string $mailboxId = null,
-        array|OpenapiHeaders|null $headers = null
-    ): array
+    public function createSubmission(OpenapiCreateSubmissionPayload $payload): OpenapiCreateSubmissionResponse
     {
-        if ($payload instanceof OpenapiCreateSubmissionPayload) {
-            $payload = $payload->toArray();
-        }
-
-        return $this->request('POST', $this->submissionPath($mailboxId), [
-            'json' => $payload,
-            'headers' => $this->normalizeHeaders($headers),
-        ]);
+        return OpenapiCreateSubmissionResponse::fromArray(
+            $this->request('POST', $this->submissionPath(), ['json' => $payload->toArray()])
+        );
     }
 
     public function deleteMessage(
         string $messageUid,
-        ?string $mailboxId = null,
-        ?string $folderId = null,
-        ?string $messageUidValidity = null,
-        array|OpenapiHeaders|null $headers = null
+        ?OpenapiHeaders $headers = null
     ): bool {
-        $this->request('DELETE', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity), [
+        $this->request('DELETE', $this->messagePath($messageUid), [
             'headers' => $this->normalizeHeaders($headers),
         ]);
 
@@ -111,7 +90,6 @@ class OpenApiPecMassivaClient
 
         $client = Http::baseUrl(rtrim($this->baseUrl, '/'))
             ->acceptJson()
-            ->timeout($this->timeout)
             ->withHeaders($headers);
 
         if ($this->token !== null && $this->token !== '') {
@@ -140,36 +118,24 @@ class OpenApiPecMassivaClient
     }
 
     /**
-     * @param array<string, string>|OpenapiHeaders|null $headers
      * @return array<string, string>
      */
-    private function normalizeHeaders(array|OpenapiHeaders|null $headers): array
+    private function normalizeHeaders(?OpenapiHeaders $headers): array
     {
-        if ($headers instanceof OpenapiHeaders) {
-            return $headers->toArray();
-        }
-
-        return $headers ?? [];
+        return $headers?->toArray() ?? [];
     }
 
-    protected function messagePath(
-        string $messageUid,
-        ?string $mailboxId,
-        ?string $folderId,
-        ?string $messageUidValidity
-    ): string {
-        return $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity) . '/' . rawurlencode($messageUid);
+    protected function messagePath(string $messageUid): string
+    {
+        return $this->messagesBasePath() . '/' . rawurlencode($messageUid);
     }
 
-    protected function messagesBasePath(
-        ?string $mailboxId,
-        ?string $folderId,
-        ?string $messageUidValidity
-    ): string {
+    protected function messagesBasePath(): string
+    {
         return '/inbox';
     }
 
-    protected function submissionPath(?string $mailboxId): string
+    protected function submissionPath(): string
     {
         return '/send';
     }

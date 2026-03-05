@@ -33,7 +33,6 @@ class PecServiceProvider extends ServiceProvider
         return new LegalmailClient(
             baseUrl: (string) ($config['base_url'] ?? ''),
             token: isset($config['token']) ? (string) $config['token'] : null,
-            timeout: (int) ($config['timeout'] ?? 20),
             mailboxId: config('pec.mailbox_id') !== null ? (string) config('pec.mailbox_id') : null,
             folderId: config('pec.folder_id') !== null ? (string) config('pec.folder_id') : null,
             messageUidValidity: config('pec.message_uid_validity') !== null ? (string) config('pec.message_uid_validity') : null,
@@ -48,10 +47,6 @@ class PecServiceProvider extends ServiceProvider
         return new OpenApiPecMassivaClient(
             baseUrl: (string) ($config['base_url'] ?? ''),
             token: isset($config['token']) ? (string) $config['token'] : null,
-            timeout: (int) ($config['timeout'] ?? 20),
-            mailboxId: config('pec.mailbox_id') !== null ? (string) config('pec.mailbox_id') : null,
-            folderId: config('pec.folder_id') !== null ? (string) config('pec.folder_id') : null,
-            messageUidValidity: config('pec.message_uid_validity') !== null ? (string) config('pec.message_uid_validity') : null,
             headers: (array) ($config['headers'] ?? []),
         );
     }
