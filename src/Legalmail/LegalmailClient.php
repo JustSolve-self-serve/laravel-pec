@@ -1,6 +1,6 @@
 <?php
 
-namespace JustSolve\LaravelPec\Services;
+namespace JustSolve\LaravelPec\Legalmail;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;

@@ -8,7 +8,7 @@ use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
-use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class OpenApiCreateSubmissionModelsTest extends TestCase

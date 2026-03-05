@@ -3,8 +3,8 @@
 namespace JustSolve\LaravelPec;
 
 use Illuminate\Support\ServiceProvider;
-use JustSolve\LaravelPec\Services\LegalmailClient;
-use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\Legalmail\LegalmailClient;
+use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
 
 class PecServiceProvider extends ServiceProvider
 {

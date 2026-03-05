@@ -3,7 +3,7 @@
 namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
-use JustSolve\LaravelPec\Services\LegalmailClient;
+use JustSolve\LaravelPec\Legalmail\LegalmailClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 use RuntimeException;
 

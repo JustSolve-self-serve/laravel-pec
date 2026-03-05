@@ -2,8 +2,8 @@
 
 namespace JustSolve\LaravelPec\Tests\Integration;
 
-use JustSolve\LaravelPec\Services\LegalmailClient;
-use JustSolve\LaravelPec\Services\OpenApiPecMassivaClient;
+use JustSolve\LaravelPec\Legalmail\LegalmailClient;
+use JustSolve\LaravelPec\OpenApi\OpenApiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class PecSandboxIntegrationTest extends TestCase
