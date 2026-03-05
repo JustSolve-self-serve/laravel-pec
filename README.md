@@ -78,6 +78,13 @@ $legalmailClient = legalmail_client();
 $openApiClient = openapi_pec_massiva_client();
 ```
 
+Or use facades:
+
+```php
+use JustSolve\LaravelPec\Facades\Legalmail;
+use JustSolve\LaravelPec\Facades\OpenapiPecMassiva;
+```
+
 ### listMessages
 
 Driver endpoints:
