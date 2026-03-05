@@ -8,13 +8,15 @@ interface PecClient
      * Retrieve a collection of resources from the provider.
      *
      * @param array<string, mixed> $query
+     * @param array<string, string>|RequestHeaders|null $headers
      * @return array<string, mixed>
      */
     public function listMessages(
         array $query = [],
         ?string $mailboxId = null,
         ?string $folderId = null,
-        ?string $messageUidValidity = null
+        ?string $messageUidValidity = null,
+        array|RequestHeaders|null $headers = null
     ): array;
 
     /**
@@ -26,16 +28,22 @@ interface PecClient
         string $messageUid,
         ?string $mailboxId = null,
         ?string $folderId = null,
-        ?string $messageUidValidity = null
+        ?string $messageUidValidity = null,
+        array|RequestHeaders|null $headers = null
     ): array;
 
     /**
      * Create a resource in the provider.
      *
      * @param array<string, mixed>|CreateSubmissionPayload $payload
+     * @param array<string, string>|RequestHeaders|null $headers
      * @return array<string, mixed>
      */
-    public function createSubmission(array|CreateSubmissionPayload $payload, ?string $mailboxId = null): array;
+    public function createSubmission(
+        array|CreateSubmissionPayload $payload,
+        ?string $mailboxId = null,
+        array|RequestHeaders|null $headers = null
+    ): array;
 
     /**
      * Delete a resource in the provider.
@@ -44,6 +52,7 @@ interface PecClient
         string $messageUid,
         ?string $mailboxId = null,
         ?string $folderId = null,
-        ?string $messageUidValidity = null
+        ?string $messageUidValidity = null,
+        array|RequestHeaders|null $headers = null
     ): bool;
 }

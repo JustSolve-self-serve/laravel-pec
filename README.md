@@ -107,6 +107,18 @@ Driver endpoints:
 $response = $client->listMessages(['limit' => 10]);
 ```
 
+OpenAPI custom headers model (for `openapi_pec_massiva` list/get/delete):
+
+```php
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
+
+$openApiClient = app(\JustSolve\LaravelPec\Contracts\PecClientManager::class)
+    ->driver('openapi_pec_massiva');
+
+$headers = new OpenapiHeaders('openapi-user', 'openapi-pass');
+$response = $openApiClient->listMessages(headers: $headers);
+```
+
 Override path parameters per call (optional):
 
 ```php

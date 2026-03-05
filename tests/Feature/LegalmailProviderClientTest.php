@@ -46,6 +46,22 @@ class LegalmailProviderClientTest extends TestCase
         });
     }
 
+    public function test_it_accepts_optional_headers_on_common_methods(): void
+    {
+        Http::fake([
+            '*' => Http::response(['ok' => true], 200),
+        ]);
+
+        $client = $this->app->make(PecClient::class);
+
+        $client->listMessages(headers: ['x-trace-id' => 'trace-1']);
+        $client->getMessage('42', headers: ['x-trace-id' => 'trace-2']);
+        $client->deleteMessage('42', headers: ['x-trace-id' => 'trace-3']);
+
+        Http::assertSentCount(3);
+        Http::assertSent(fn ($request): bool => $request->hasHeader('x-trace-id'));
+    }
+
     public function test_it_creates_submission(): void
     {
         Http::fake([

@@ -7,6 +7,8 @@ use InvalidArgumentException;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\OpenApi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\OpenApi\Models\OpenapiHeaders;
+use JustSolve\LaravelPec\Services\OpenApiPecMassivaProviderClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
 class OpenApiCreateSubmissionModelsTest extends TestCase
@@ -73,6 +75,22 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
         ]);
     }
 
+    public function test_it_serializes_openapi_headers_model(): void
+    {
+        $headers = OpenapiHeaders::fromArray([
+            'x-username' => 'openapi-user',
+            'x-password' => 'openapi-pass',
+        ]);
+
+        $this->assertSame(
+            [
+                'x-username' => 'openapi-user',
+                'x-password' => 'openapi-pass',
+            ],
+            $headers->toArray()
+        );
+    }
+
     public function test_openapi_client_works_with_payload_model_via_array_conversion(): void
     {
         Http::fake([
@@ -116,6 +134,30 @@ class OpenApiCreateSubmissionModelsTest extends TestCase
             return $request['sender'] === 'sender@example.test'
                 && $request['recipient'] === ['recipient@example.test']
                 && $request['attachments'][0]['name'] === 'invoice.pdf';
+        });
+    }
+
+    public function test_openapi_client_sends_openapi_headers_for_list_get_and_delete(): void
+    {
+        Http::fake([
+            '*' => Http::response(['ok' => true], 200),
+        ]);
+
+        $manager = $this->app->make(\JustSolve\LaravelPec\Contracts\PecClientManager::class);
+        $client = $manager->driver('openapi_pec_massiva');
+
+        $this->assertInstanceOf(OpenApiPecMassivaProviderClient::class, $client);
+
+        $headers = new OpenapiHeaders('openapi-user', 'openapi-pass');
+
+        $client->listMessages(headers: $headers);
+        $client->getMessage('message-1', headers: $headers);
+        $client->deleteMessage('message-1', headers: $headers);
+
+        Http::assertSentCount(3);
+        Http::assertSent(function ($request): bool {
+            return $request->hasHeader('x-username', 'openapi-user')
+                && $request->hasHeader('x-password', 'openapi-pass');
         });
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\Contracts\CreateSubmissionPayload;
 use JustSolve\LaravelPec\Contracts\PecClient;
+use JustSolve\LaravelPec\Contracts\RequestHeaders;
 use RuntimeException;
 
 abstract class AbstractHttpPecClient implements PecClient
@@ -29,42 +30,59 @@ abstract class AbstractHttpPecClient implements PecClient
         array $query = [],
         ?string $mailboxId = null,
         ?string $folderId = null,
-        ?string $messageUidValidity = null
+        ?string $messageUidValidity = null,
+        array|RequestHeaders|null $headers = null
     ): array {
-        return $this->request('GET', $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity), ['query' => $query]);
+        return $this->request('GET', $this->messagesBasePath($mailboxId, $folderId, $messageUidValidity), [
+            'query' => $query,
+            'headers' => $this->normalizeHeaders($headers),
+        ]);
     }
 
     public function getMessage(
         string $messageUid,
         ?string $mailboxId = null,
         ?string $folderId = null,
-        ?string $messageUidValidity = null
+        ?string $messageUidValidity = null,
+        array|RequestHeaders|null $headers = null
     ): array {
-        return $this->request('GET', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity));
+        return $this->request('GET', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity), [
+            'headers' => $this->normalizeHeaders($headers),
+        ]);
     }
 
-    public function createSubmission(array|CreateSubmissionPayload $payload, ?string $mailboxId = null): array
+    public function createSubmission(
+        array|CreateSubmissionPayload $payload,
+        ?string $mailboxId = null,
+        array|RequestHeaders|null $headers = null
+    ): array
     {
         if ($payload instanceof CreateSubmissionPayload) {
             $payload = $payload->toArray();
         }
 
-        return $this->request('POST', $this->submissionPath($mailboxId), ['json' => $payload]);
+        return $this->request('POST', $this->submissionPath($mailboxId), [
+            'json' => $payload,
+            'headers' => $this->normalizeHeaders($headers),
+        ]);
     }
 
     public function deleteMessage(
         string $messageUid,
         ?string $mailboxId = null,
         ?string $folderId = null,
-        ?string $messageUidValidity = null
+        ?string $messageUidValidity = null,
+        array|RequestHeaders|null $headers = null
     ): bool {
-        $this->request('DELETE', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity));
+        $this->request('DELETE', $this->messagePath($messageUid, $mailboxId, $folderId, $messageUidValidity), [
+            'headers' => $this->normalizeHeaders($headers),
+        ]);
 
         return true;
     }
 
     /**
-     * @param array{query?: array<string, mixed>, json?: array<string, mixed>} $options
+     * @param array{query?: array<string, mixed>, json?: array<string, mixed>, headers?: array<string, string>} $options
      * @return array<string, mixed>
      */
     protected function request(string $method, string $uri, array $options = []): array
@@ -74,23 +92,28 @@ abstract class AbstractHttpPecClient implements PecClient
         }
 
         $response = match ($method) {
-            'GET' => $this->client()->get($uri, $options['query'] ?? []),
-            'POST' => $this->client()->post($uri, $options['json'] ?? []),
-            'PUT' => $this->client()->put($uri, $options['json'] ?? []),
-            'PATCH' => $this->client()->patch($uri, $options['json'] ?? []),
-            'DELETE' => $this->client()->delete($uri),
+            'GET' => $this->client($options['headers'] ?? [])->get($uri, $options['query'] ?? []),
+            'POST' => $this->client($options['headers'] ?? [])->post($uri, $options['json'] ?? []),
+            'PUT' => $this->client($options['headers'] ?? [])->put($uri, $options['json'] ?? []),
+            'PATCH' => $this->client($options['headers'] ?? [])->patch($uri, $options['json'] ?? []),
+            'DELETE' => $this->client($options['headers'] ?? [])->delete($uri),
             default => throw new RuntimeException("Unsupported method [{$method}]."),
         };
 
         return $this->decodeResponse($response);
     }
 
-    private function client(): PendingRequest
+    /**
+     * @param array<string, string> $requestHeaders
+     */
+    private function client(array $requestHeaders = []): PendingRequest
     {
+        $headers = array_merge($this->headers, $requestHeaders);
+
         $client = Http::baseUrl(rtrim($this->baseUrl, '/'))
             ->acceptJson()
             ->timeout($this->timeout)
-            ->withHeaders($this->headers);
+            ->withHeaders($headers);
 
         if ($this->token !== null && $this->token !== '') {
             $client = $client->withToken($this->token);
@@ -115,6 +138,19 @@ abstract class AbstractHttpPecClient implements PecClient
         );
 
         throw new RuntimeException($message);
+    }
+
+    /**
+     * @param array<string, string>|RequestHeaders|null $headers
+     * @return array<string, string>
+     */
+    private function normalizeHeaders(array|RequestHeaders|null $headers): array
+    {
+        if ($headers instanceof RequestHeaders) {
+            return $headers->toArray();
+        }
+
+        return $headers ?? [];
     }
 
     protected function messagePath(
