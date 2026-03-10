@@ -208,7 +208,11 @@ By default, integration tests are skipped.
 
 ### Run integration tests against sandbox
 
-From package root, set env vars in your terminal session:
+The integration tests are split by driver and each driver has its own enable flag.
+
+Legalmail integration test currently covers `listMessages()`.
+
+Required variables for Legalmail:
 
 ```bash
 export LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true
@@ -219,12 +223,27 @@ export LEGALMAIL_PEC_FOLDER_ID="your-folder-id"
 export LEGALMAIL_PEC_MESSAGE_UID_VALIDITY="your-uid-validity"
 ```
 
-For OpenAPI integration tests:
+OpenAPI integration tests currently cover:
+- `listMessages()`
+- `createSubmission()`
+
+Required variables for OpenAPI:
 
 ```bash
 export OPENAPI_PEC_RUN_INTEGRATION_TESTS=true
 export OPENAPI_PEC_MASSIVA_BASE_URL="https://your-openapi-sandbox-url"
 export OPENAPI_PEC_MASSIVA_TOKEN="your-openapi-token"
+export OPENAPI_PEC_TEST_SENDER="sender@pec.example"
+export OPENAPI_PEC_TEST_RECIPIENT="recipient@pec.example"
+export OPENAPI_PEC_TEST_USERNAME="openapi-username"
+export OPENAPI_PEC_TEST_PASSWORD="openapi-password"
+```
+
+Optional variables for the OpenAPI send test:
+
+```bash
+export OPENAPI_PEC_TEST_SUBJECT="Integration test subject"
+export OPENAPI_PEC_TEST_BODY="Integration test body"
 ```
 
 Then run:
@@ -237,6 +256,7 @@ Notes:
 
 - `LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true` enables Legalmail integration tests.
 - `OPENAPI_PEC_RUN_INTEGRATION_TESTS=true` enables OpenAPI integration tests.
+- If `OPENAPI_PEC_TEST_SENDER`, `OPENAPI_PEC_TEST_RECIPIENT`, `OPENAPI_PEC_TEST_USERNAME`, or `OPENAPI_PEC_TEST_PASSWORD` are missing, the OpenAPI send test is skipped.
 
 ## Error Handling
 
