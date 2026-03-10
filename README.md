@@ -212,13 +212,19 @@ From package root, set env vars in your terminal session:
 
 ```bash
 export LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true
-export LEGALMAIL_PEC_DRIVER="legalmail" # or openapi_pec_massiva
 export LEGALMAIL_PEC_BASE_URL="https://your-sandbox-url"
 export LEGALMAIL_PEC_TOKEN="your-token"
 export LEGALMAIL_PEC_MAILBOX_ID="your-mailbox-id"
 export LEGALMAIL_PEC_FOLDER_ID="your-folder-id"
 export LEGALMAIL_PEC_MESSAGE_UID_VALIDITY="your-uid-validity"
-export LEGALMAIL_PEC_TEST_MESSAGE_UID="existing-message-uid"
+```
+
+For OpenAPI integration tests:
+
+```bash
+export OPENAPI_PEC_RUN_INTEGRATION_TESTS=true
+export OPENAPI_PEC_MASSIVA_BASE_URL="https://your-openapi-sandbox-url"
+export OPENAPI_PEC_MASSIVA_TOKEN="your-openapi-token"
 ```
 
 Then run:
@@ -229,8 +235,8 @@ Then run:
 
 Notes:
 
-- `LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true` is required; otherwise integration tests are skipped.
-- `LEGALMAIL_PEC_TEST_MESSAGE_UID` is required for the `getMessage` integration test.
+- `LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true` enables Legalmail integration tests.
+- `OPENAPI_PEC_RUN_INTEGRATION_TESTS=true` enables OpenAPI integration tests.
 
 ## Error Handling
 
