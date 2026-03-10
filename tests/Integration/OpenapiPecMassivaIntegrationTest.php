@@ -4,6 +4,8 @@ namespace JustSolve\LaravelPec\Tests\Integration;
 
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiDeleteMessageResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
@@ -11,19 +13,36 @@ use JustSolve\LaravelPec\Tests\TestCase;
 
 class OpenapiPecMassivaIntegrationTest extends TestCase
 {
-    public function test_it_can_list_messages_against_openapi_sandbox(): void
+    public function test_it_can_create_list_get_and_delete_a_message_against_openapi_sandbox(): void
     {
         $this->skipIfIntegrationTestsAreDisabled();
 
         $payload = $this->submissionPayloadFromEnv();
 
-        $client = $this->app->make(OpenapiPecMassivaClient::class);
-        $creation = $client->createSubmission($payload);
-
         $headers = $this->openapiCredentialHeaders(); 
+        $client = $this->app->make(OpenapiPecMassivaClient::class);
+
+        $creation = $client->createSubmission($payload);
+        $this->assertInstanceOf(OpenapiCreateSubmissionResponse::class, $creation);
+        $this->assertTrue($creation->success);
+        $this->assertNotSame('', $creation->messageId);
+
         $response = $client->listMessages(headers: $headers);
 
         $this->assertInstanceOf(OpenapiListMessagesResponse::class, $response);
+        $this->assertTrue($response->success);
+        $this->assertNotEmpty($response->data);
+
+        $messageId = (string) $response->data[0]->id;
+        $this->assertNotSame('', $messageId);
+
+        $message = $client->getMessage($messageId, headers: $headers);
+        $this->assertInstanceOf(OpenapiGetMessageResponse::class, $message);
+        $this->assertTrue($message->success);
+
+        $deleted = $client->deleteMessage($messageId, headers: $headers);
+        $this->assertInstanceOf(OpenapiDeleteMessageResponse::class, $deleted);
+        $this->assertTrue($deleted->success);
     }
 
     /*public function test_it_can_send_a_pec_against_openapi_sandbox_when_submission_env_is_provided(): void
