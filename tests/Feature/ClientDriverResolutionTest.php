@@ -44,12 +44,21 @@ class ClientDriverResolutionTest extends TestCase
     public function test_openapi_pec_massiva_uses_its_provider_specific_uris(): void
     {
         Http::fake([
-            '*' => Http::response([
+            'https://openapi.example.test/inbox' => Http::response([
+                'data' => [],
+                'success' => true,
+                'message' => 'Ok',
+                'page' => 1,
+                'total' => 0,
+                'n_of_pages' => 0,
+            ], 200),
+            'https://openapi.example.test/send' => Http::response([
                 'success' => true,
                 'message' => 'Queued',
                 'message_id' => 'message-1',
                 'sent' => 1,
             ], 200),
+            '*' => Http::response(['ok' => true], 200),
         ]);
 
         $client = $this->app->make(OpenapiPecMassivaClient::class);
