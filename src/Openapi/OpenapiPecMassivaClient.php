@@ -7,6 +7,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiDeleteMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
@@ -57,12 +58,12 @@ class OpenapiPecMassivaClient
     public function deleteMessage(
         string $messageUid,
         ?OpenapiHeaders $headers = null
-    ): bool {
-        $this->request('DELETE', $this->messagePath($messageUid), [
-            'headers' => $this->normalizeHeaders($headers),
-        ]);
-
-        return true;
+    ): OpenapiDeleteMessageResponse {
+        return OpenapiDeleteMessageResponse::fromArray(
+            $this->request('DELETE', $this->messagePath($messageUid), [
+                'headers' => $this->normalizeHeaders($headers),
+            ])
+        );
     }
 
     /**

@@ -43,36 +43,52 @@ class ClientDriverResolutionTest extends TestCase
 
     public function test_openapi_pec_massiva_uses_its_provider_specific_uris(): void
     {
-        Http::fake([
-            'https://openapi.example.test/inbox' => Http::response([
-                'data' => [],
-                'success' => true,
-                'message' => 'Ok',
-                'page' => 1,
-                'total' => 0,
-                'n_of_pages' => 0,
-            ], 200),
-            'https://openapi.example.test/inbox/*' => Http::response([
-                'data' => [
-                    [
-                        'sender' => 'sender@example.test',
-                        'recipient' => 'recipient@example.test',
-                        'date' => '2026-03-10 10:00:00',
-                        'object' => 'PEC subject',
-                        'body' => 'PEC body',
+        Http::fake(function ($request) {
+            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox') {
+                return Http::response([
+                    'data' => [],
+                    'success' => true,
+                    'message' => 'Ok',
+                    'page' => 1,
+                    'total' => 0,
+                    'n_of_pages' => 0,
+                ], 200);
+            }
+
+            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+                return Http::response([
+                    'data' => [
+                        [
+                            'sender' => 'sender@example.test',
+                            'recipient' => 'recipient@example.test',
+                            'date' => '2026-03-10 10:00:00',
+                            'object' => 'PEC subject',
+                            'body' => 'PEC body',
+                        ],
                     ],
-                ],
-                'success' => true,
-                'message' => 'Ok',
-            ], 200),
-            'https://openapi.example.test/send' => Http::response([
-                'success' => true,
-                'message' => 'Queued',
-                'message_id' => 'message-1',
-                'sent' => 1,
-            ], 200),
-            '*' => Http::response(['ok' => true], 200),
-        ]);
+                    'success' => true,
+                    'message' => 'Ok',
+                ], 200);
+            }
+
+            if ($request->method() === 'POST' && $request->url() === 'https://openapi.example.test/send') {
+                return Http::response([
+                    'success' => true,
+                    'message' => 'Queued',
+                    'message_id' => 'message-1',
+                    'sent' => 1,
+                ], 200);
+            }
+
+            if ($request->method() === 'DELETE' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+                return Http::response([
+                    'success' => true,
+                    'message' => 'Deleted',
+                ], 200);
+            }
+
+            return Http::response(['ok' => true], 200);
+        });
 
         $client = $this->app->make(OpenapiPecMassivaClient::class);
 

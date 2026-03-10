@@ -9,13 +9,14 @@ use JustSolve\LaravelPec\Openapi\Models\InboxSearch;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiDeleteMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
-class OpenapiCreateSubmissionModelsTest extends TestCase
+class OpenapiClientTest extends TestCase
 {
     public function test_it_serializes_payload_with_attachment_models(): void
     {
@@ -170,6 +171,28 @@ class OpenapiCreateSubmissionModelsTest extends TestCase
         ]);
     }
 
+    public function test_it_hydrates_typed_delete_message_response(): void
+    {
+        $response = OpenapiDeleteMessageResponse::fromArray([
+            'success' => true,
+            'message' => 'Deleted',
+        ]);
+
+        $this->assertTrue($response->success);
+        $this->assertSame('Deleted', $response->message);
+    }
+
+    public function test_it_rejects_invalid_delete_message_response_data(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('OpenapiDeleteMessageResponse.success must be a boolean.');
+
+        OpenapiDeleteMessageResponse::fromArray([
+            'success' => 'yes',
+            'message' => 'Deleted',
+        ]);
+    }
+
     public function test_openapi_client_returns_typed_create_submission_response(): void
     {
         Http::fake([
@@ -282,31 +305,68 @@ class OpenapiCreateSubmissionModelsTest extends TestCase
         });
     }
 
-    public function test_openapi_client_sends_openapi_headers_for_list_get_and_delete(): void
+    public function test_openapi_client_returns_typed_delete_message_response(): void
     {
         Http::fake([
-            'https://openapi.example.test/inbox' => Http::response([
-                'data' => [],
+            '*' => Http::response([
                 'success' => true,
-                'message' => 'Ok',
-                'page' => 1,
-                'total' => 0,
-                'n_of_pages' => 0,
-            ], 200),
-            'https://openapi.example.test/inbox/*' => Http::response([
-                'data' => [
-                    [
-                        'sender' => 'sender@example.test',
-                        'recipient' => 'recipient@example.test',
-                        'date' => '2026-03-10 10:00:00',
-                        'object' => 'PEC subject',
-                        'body' => 'PEC body',
-                    ],
-                ],
-                'success' => true,
-                'message' => 'Ok',
+                'message' => 'Deleted',
             ], 200),
         ]);
+
+        $client = $this->app->make(OpenapiPecMassivaClient::class);
+
+        $response = $client->deleteMessage('message-1');
+
+        $this->assertInstanceOf(OpenapiDeleteMessageResponse::class, $response);
+        $this->assertTrue($response->success);
+        $this->assertSame('Deleted', $response->message);
+
+        Http::assertSent(function ($request): bool {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://openapi.example.test/inbox/message-1';
+        });
+    }
+
+    public function test_openapi_client_sends_openapi_headers_for_list_get_and_delete(): void
+    {
+        Http::fake(function ($request) {
+            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox') {
+                return Http::response([
+                    'data' => [],
+                    'success' => true,
+                    'message' => 'Ok',
+                    'page' => 1,
+                    'total' => 0,
+                    'n_of_pages' => 0,
+                ], 200);
+            }
+
+            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+                return Http::response([
+                    'data' => [
+                        [
+                            'sender' => 'sender@example.test',
+                            'recipient' => 'recipient@example.test',
+                            'date' => '2026-03-10 10:00:00',
+                            'object' => 'PEC subject',
+                            'body' => 'PEC body',
+                        ],
+                    ],
+                    'success' => true,
+                    'message' => 'Ok',
+                ], 200);
+            }
+
+            if ($request->method() === 'DELETE' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+                return Http::response([
+                    'success' => true,
+                    'message' => 'Deleted',
+                ], 200);
+            }
+
+            return Http::response([], 404);
+        });
 
         $client = $this->app->make(OpenapiPecMassivaClient::class);
 
