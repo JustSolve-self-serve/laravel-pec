@@ -226,7 +226,7 @@ class OpenapiClientTest extends TestCase
         $this->assertSame(1, $response->sent);
 
         Http::assertSent(function ($request): bool {
-            if ($request->method() !== 'POST' || ! str_starts_with($request->url(), 'https://openapi.example.test/send')) {
+            if ($request->method() !== 'POST' || ! str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/send')) {
                 return false;
             }
 
@@ -268,7 +268,7 @@ class OpenapiClientTest extends TestCase
 
         Http::assertSent(function ($request): bool {
             return $request->method() === 'GET'
-                && $request->url() === 'https://openapi.example.test/inbox?limit=10';
+                && $request->url() === 'https://test.ws.pecmassiva.com/inbox?limit=10';
         });
     }
 
@@ -301,7 +301,7 @@ class OpenapiClientTest extends TestCase
 
         Http::assertSent(function ($request): bool {
             return $request->method() === 'GET'
-                && $request->url() === 'https://openapi.example.test/inbox/message-1';
+                && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1';
         });
     }
 
@@ -324,14 +324,14 @@ class OpenapiClientTest extends TestCase
 
         Http::assertSent(function ($request): bool {
             return $request->method() === 'DELETE'
-                && $request->url() === 'https://openapi.example.test/inbox/message-1';
+                && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1';
         });
     }
 
     public function test_openapi_client_sends_openapi_headers_for_list_get_and_delete(): void
     {
         Http::fake(function ($request) {
-            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox') {
+            if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox') {
                 return Http::response([
                     'data' => [],
                     'success' => true,
@@ -342,7 +342,7 @@ class OpenapiClientTest extends TestCase
                 ], 200);
             }
 
-            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+            if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
                 return Http::response([
                     'data' => [
                         [
@@ -358,7 +358,7 @@ class OpenapiClientTest extends TestCase
                 ], 200);
             }
 
-            if ($request->method() === 'DELETE' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+            if ($request->method() === 'DELETE' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
                 return Http::response([
                     'success' => true,
                     'message' => 'Deleted',

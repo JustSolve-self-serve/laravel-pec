@@ -51,6 +51,6 @@ class ClientFacadesTest extends TestCase
         $this->assertSame('message-1', $response->messageId);
 
         Http::assertSent(fn ($request): bool => $request->method() === 'POST'
-            && str_starts_with($request->url(), 'https://openapi.example.test/send'));
+            && str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/send'));
     }
 }

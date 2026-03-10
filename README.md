@@ -55,7 +55,7 @@ LEGALMAIL_PEC_FOLDER_ID=your-folder-id
 LEGALMAIL_PEC_MESSAGE_UID_VALIDITY=your-message-uid-validity
 
 # Driver: openapi_pec_massiva
-OPENAPI_PEC_MASSIVA_BASE_URL=https://your-openapi-base-url
+OPENAPI_PEC_MASSIVA_BASE_URL=https://test.ws.pecmassiva.com
 OPENAPI_PEC_MASSIVA_TOKEN=your-openapi-token
 ```
 
@@ -231,7 +231,7 @@ Required variables for OpenAPI:
 
 ```bash
 export OPENAPI_PEC_RUN_INTEGRATION_TESTS=true
-export OPENAPI_PEC_MASSIVA_BASE_URL="https://your-openapi-sandbox-url"
+export OPENAPI_PEC_MASSIVA_BASE_URL="https://test.ws.pecmassiva.com"
 export OPENAPI_PEC_MASSIVA_TOKEN="your-openapi-token"
 export OPENAPI_PEC_TEST_SENDER="sender@pec.example"
 export OPENAPI_PEC_TEST_RECIPIENT="recipient@pec.example"

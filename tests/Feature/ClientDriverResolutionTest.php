@@ -44,7 +44,7 @@ class ClientDriverResolutionTest extends TestCase
     public function test_openapi_pec_massiva_uses_its_provider_specific_uris(): void
     {
         Http::fake(function ($request) {
-            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox') {
+            if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox') {
                 return Http::response([
                     'data' => [],
                     'success' => true,
@@ -55,7 +55,7 @@ class ClientDriverResolutionTest extends TestCase
                 ], 200);
             }
 
-            if ($request->method() === 'GET' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+            if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
                 return Http::response([
                     'data' => [
                         [
@@ -71,7 +71,7 @@ class ClientDriverResolutionTest extends TestCase
                 ], 200);
             }
 
-            if ($request->method() === 'POST' && $request->url() === 'https://openapi.example.test/send') {
+            if ($request->method() === 'POST' && $request->url() === 'https://test.ws.pecmassiva.com/send') {
                 return Http::response([
                     'success' => true,
                     'message' => 'Queued',
@@ -80,7 +80,7 @@ class ClientDriverResolutionTest extends TestCase
                 ], 200);
             }
 
-            if ($request->method() === 'DELETE' && $request->url() === 'https://openapi.example.test/inbox/message-1') {
+            if ($request->method() === 'DELETE' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
                 return Http::response([
                     'success' => true,
                     'message' => 'Deleted',
@@ -106,12 +106,12 @@ class ClientDriverResolutionTest extends TestCase
         $client->deleteMessage('message-1');
 
         Http::assertSent(fn ($request): bool => $request->method() === 'GET'
-            && str_starts_with($request->url(), 'https://openapi.example.test/inbox'));
+            && str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/inbox'));
         Http::assertSent(fn ($request): bool => $request->method() === 'GET'
-            && str_starts_with($request->url(), 'https://openapi.example.test/inbox/message-1'));
+            && str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/inbox/message-1'));
         Http::assertSent(fn ($request): bool => $request->method() === 'POST'
-            && str_starts_with($request->url(), 'https://openapi.example.test/send'));
+            && str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/send'));
         Http::assertSent(fn ($request): bool => $request->method() === 'DELETE'
-            && str_starts_with($request->url(), 'https://openapi.example.test/inbox/message-1'));
+            && str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/inbox/message-1'));
     }
 }

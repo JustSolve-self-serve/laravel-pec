@@ -11,7 +11,7 @@ return [
             'headers' => [],
         ],
         'openapi_pec_massiva' => [
-            'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', ''),
+            'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://test.ws.pecmassiva.com'),
             'token' => env('OPENAPI_PEC_MASSIVA_TOKEN'),
             'headers' => [],
         ],

@@ -26,7 +26,7 @@ abstract class TestCase extends Orchestra
                 'headers' => [],
             ],
             'openapi_pec_massiva' => [
-                'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://openapi.example.test'),
+                'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://test.ws.pecmassiva.com'),
                 'token' => env('OPENAPI_PEC_MASSIVA_TOKEN', 'openapi-token'),
                 'headers' => [],
             ],
