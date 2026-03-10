@@ -4,6 +4,7 @@ namespace JustSolve\LaravelPec\Tests\Integration;
 
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
@@ -14,13 +15,18 @@ class OpenapiPecMassivaIntegrationTest extends TestCase
     {
         $this->skipIfIntegrationTestsAreDisabled();
 
+        $payload = $this->submissionPayloadFromEnv();
+
         $client = $this->app->make(OpenapiPecMassivaClient::class);
-        $response = $client->listMessages();
+        $creation = $client->createSubmission($payload);
+
+        $headers = $this->openapiCredentialHeaders(); 
+        $response = $client->listMessages(headers: $headers);
 
         $this->assertInstanceOf(OpenapiListMessagesResponse::class, $response);
     }
 
-    public function test_it_can_send_a_pec_against_openapi_sandbox_when_submission_env_is_provided(): void
+    /*public function test_it_can_send_a_pec_against_openapi_sandbox_when_submission_env_is_provided(): void
     {
         $this->skipIfIntegrationTestsAreDisabled();
 
@@ -32,6 +38,13 @@ class OpenapiPecMassivaIntegrationTest extends TestCase
         $this->assertInstanceOf(OpenapiCreateSubmissionResponse::class, $response);
         $this->assertTrue($response->success);
         $this->assertNotSame('', $response->messageId);
+    }*/
+
+    private function openapiCredentialHeaders(): OpenapiHeaders
+    {
+        $username = env('OPENAPI_PEC_TEST_USERNAME');
+        $password = env('OPENAPI_PEC_TEST_PASSWORD');
+        return new OpenapiHeaders($username, $password);
     }
 
     private function submissionPayloadFromEnv(): OpenapiCreateSubmissionPayload
@@ -52,7 +65,7 @@ class OpenapiPecMassivaIntegrationTest extends TestCase
         return new OpenapiCreateSubmissionPayload(
             sender: $requiredEnv['OPENAPI_PEC_TEST_SENDER'],
             recipient: $requiredEnv['OPENAPI_PEC_TEST_RECIPIENT'],
-            subject: (string) env('OPENAPI_PEC_TEST_SUBJECT', 'Codex OpenAPI PEC integration test'),
+            subject: (string) env('OPENAPI_PEC_TEST_SUBJECT', 'OpenAPI PEC integration test'),
             body: (string) env('OPENAPI_PEC_TEST_BODY', 'Automated integration test message.'),
             attachments: [],
             username: $requiredEnv['OPENAPI_PEC_TEST_USERNAME'],

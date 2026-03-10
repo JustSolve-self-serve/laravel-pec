@@ -36,7 +36,6 @@ class PecServiceProvider extends ServiceProvider
             mailboxId: isset($config['mailbox_id']) ? (string) $config['mailbox_id'] : null,
             folderId: isset($config['folder_id']) ? (string) $config['folder_id'] : null,
             messageUidValidity: isset($config['message_uid_validity']) ? (string) $config['message_uid_validity'] : null,
-            headers: (array) ($config['headers'] ?? []),
         );
     }
 
@@ -46,8 +45,7 @@ class PecServiceProvider extends ServiceProvider
 
         return new OpenapiPecMassivaClient(
             baseUrl: (string) ($config['base_url'] ?? ''),
-            token: isset($config['token']) ? (string) $config['token'] : null,
-            headers: (array) ($config['headers'] ?? []),
+            token: (string) ($config['token'] ?? ''),
         );
     }
 

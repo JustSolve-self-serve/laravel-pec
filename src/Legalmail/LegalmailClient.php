@@ -18,8 +18,15 @@ class LegalmailClient
         private readonly ?string $mailboxId = null,
         private readonly ?string $folderId = null,
         private readonly ?string $messageUidValidity = null,
-        private readonly array $headers = [],
     ) {
+    }
+
+    private function headers(): array
+    {
+        return [
+            'Accept'       => 'application/json',
+            'Content-Type' => 'application/json',
+        ];
     }
 
     public function listMessages(
@@ -114,7 +121,7 @@ class LegalmailClient
      */
     private function client(array $requestHeaders = []): PendingRequest
     {
-        $headers = array_merge($this->headers, $requestHeaders);
+        $headers = array_merge($this->headers(), $requestHeaders);
 
         $client = Http::baseUrl(rtrim($this->baseUrl, '/'))
             ->acceptJson()

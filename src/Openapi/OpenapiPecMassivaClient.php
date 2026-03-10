@@ -20,9 +20,15 @@ class OpenapiPecMassivaClient
      */
     public function __construct(
         private readonly string $baseUrl,
-        private readonly ?string $token = null,
-        private readonly array $headers = [],
-    ) {
+        private readonly string $token,
+    ) {}
+
+    private function headers(): array
+    {
+        return [
+            'Accept'       => 'application/json',
+            'Content-Type' => 'application/json',
+        ];
     }
 
     public function listMessages(
@@ -93,15 +99,12 @@ class OpenapiPecMassivaClient
      */
     private function client(array $requestHeaders = []): PendingRequest
     {
-        $headers = array_merge($this->headers, $requestHeaders);
+        $headers = array_merge($this->headers(), $requestHeaders);
 
         $client = Http::baseUrl(rtrim($this->baseUrl, '/'))
             ->acceptJson()
-            ->withHeaders($headers);
-
-        if ($this->token !== null && $this->token !== '') {
-            $client = $client->withToken($this->token);
-        }
+            ->withHeaders($headers)
+            ->withToken($this->token);
 
         return $client;
     }

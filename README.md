@@ -257,6 +257,7 @@ Notes:
 - `LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true` enables Legalmail integration tests.
 - `OPENAPI_PEC_RUN_INTEGRATION_TESTS=true` enables OpenAPI integration tests.
 - If `OPENAPI_PEC_TEST_SENDER`, `OPENAPI_PEC_TEST_RECIPIENT`, `OPENAPI_PEC_TEST_USERNAME`, or `OPENAPI_PEC_TEST_PASSWORD` are missing, the OpenAPI send test is skipped.
+- `OPENAPI_PEC_MASSIVA_TOKEN` is required and is used as the bearer token for the OpenAPI client.
 
 ## Error Handling
 

@@ -23,12 +23,10 @@ abstract class TestCase extends Orchestra
                 'mailbox_id' => env('LEGALMAIL_PEC_MAILBOX_ID', 'mailbox-1'),
                 'folder_id' => env('LEGALMAIL_PEC_FOLDER_ID', 'folder-1'),
                 'message_uid_validity' => env('LEGALMAIL_PEC_MESSAGE_UID_VALIDITY', '999'),
-                'headers' => [],
             ],
             'openapi_pec_massiva' => [
                 'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://test.ws.pecmassiva.com'),
                 'token' => env('OPENAPI_PEC_MASSIVA_TOKEN', 'openapi-token'),
-                'headers' => [],
             ],
         ]);
     }

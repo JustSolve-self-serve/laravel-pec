@@ -8,12 +8,10 @@ return [
             'mailbox_id' => env('LEGALMAIL_PEC_MAILBOX_ID'),
             'folder_id' => env('LEGALMAIL_PEC_FOLDER_ID'),
             'message_uid_validity' => env('LEGALMAIL_PEC_MESSAGE_UID_VALIDITY'),
-            'headers' => [],
         ],
         'openapi_pec_massiva' => [
             'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://test.ws.pecmassiva.com'),
             'token' => env('OPENAPI_PEC_MASSIVA_TOKEN'),
-            'headers' => [],
         ],
     ],
 ];

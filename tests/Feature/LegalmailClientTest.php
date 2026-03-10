@@ -124,7 +124,6 @@ class LegalmailClientTest extends TestCase
             mailboxId: null,
             folderId: null,
             messageUidValidity: null,
-            headers: []
         );
 
         $this->expectException(RuntimeException::class);
