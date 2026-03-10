@@ -3,11 +3,13 @@
 namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
+use JustSolve\LaravelPec\Openapi\Models\InboxSingle;
 use InvalidArgumentException;
 use JustSolve\LaravelPec\Openapi\Models\InboxSearch;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
@@ -134,6 +136,40 @@ class OpenapiCreateSubmissionModelsTest extends TestCase
         ]);
     }
 
+    public function test_it_hydrates_typed_get_message_response(): void
+    {
+        $response = OpenapiGetMessageResponse::fromArray([
+            'data' => [
+                [
+                    'sender' => 'sender@example.test',
+                    'recipient' => 'recipient@example.test',
+                    'date' => '2026-03-10 10:00:00',
+                    'object' => 'PEC subject',
+                    'body' => 'PEC body',
+                ],
+            ],
+            'success' => true,
+            'message' => 'Ok',
+        ]);
+
+        $this->assertCount(1, $response->data);
+        $this->assertInstanceOf(InboxSingle::class, $response->data[0]);
+        $this->assertSame('PEC body', $response->data[0]->body);
+        $this->assertTrue($response->success);
+    }
+
+    public function test_it_rejects_invalid_get_message_response_data(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('OpenapiGetMessageResponse.success must be a boolean.');
+
+        OpenapiGetMessageResponse::fromArray([
+            'data' => [],
+            'success' => 'yes',
+            'message' => 'Ok',
+        ]);
+    }
+
     public function test_openapi_client_returns_typed_create_submission_response(): void
     {
         Http::fake([
@@ -213,6 +249,39 @@ class OpenapiCreateSubmissionModelsTest extends TestCase
         });
     }
 
+    public function test_openapi_client_returns_typed_get_message_response(): void
+    {
+        Http::fake([
+            '*' => Http::response([
+                'data' => [
+                    [
+                        'sender' => 'sender@example.test',
+                        'recipient' => 'recipient@example.test',
+                        'date' => '2026-03-10 10:00:00',
+                        'object' => 'PEC subject',
+                        'body' => 'PEC body',
+                    ],
+                ],
+                'success' => true,
+                'message' => 'Ok',
+            ], 200),
+        ]);
+
+        $client = $this->app->make(OpenapiPecMassivaClient::class);
+
+        $response = $client->getMessage('message-1');
+
+        $this->assertInstanceOf(OpenapiGetMessageResponse::class, $response);
+        $this->assertCount(1, $response->data);
+        $this->assertInstanceOf(InboxSingle::class, $response->data[0]);
+        $this->assertSame('PEC subject', $response->data[0]->object);
+
+        Http::assertSent(function ($request): bool {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://openapi.example.test/inbox/message-1';
+        });
+    }
+
     public function test_openapi_client_sends_openapi_headers_for_list_get_and_delete(): void
     {
         Http::fake([
@@ -224,7 +293,19 @@ class OpenapiCreateSubmissionModelsTest extends TestCase
                 'total' => 0,
                 'n_of_pages' => 0,
             ], 200),
-            'https://openapi.example.test/inbox/*' => Http::response(['ok' => true], 200),
+            'https://openapi.example.test/inbox/*' => Http::response([
+                'data' => [
+                    [
+                        'sender' => 'sender@example.test',
+                        'recipient' => 'recipient@example.test',
+                        'date' => '2026-03-10 10:00:00',
+                        'object' => 'PEC subject',
+                        'body' => 'PEC body',
+                    ],
+                ],
+                'success' => true,
+                'message' => 'Ok',
+            ], 200),
         ]);
 
         $client = $this->app->make(OpenapiPecMassivaClient::class);

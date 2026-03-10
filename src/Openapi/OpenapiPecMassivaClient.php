@@ -7,6 +7,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
 use RuntimeException;
@@ -38,10 +39,12 @@ class OpenapiPecMassivaClient
     public function getMessage(
         string $messageUid,
         ?OpenapiHeaders $headers = null
-    ): array {
-        return $this->request('GET', $this->messagePath($messageUid), [
-            'headers' => $this->normalizeHeaders($headers),
-        ]);
+    ): OpenapiGetMessageResponse {
+        return OpenapiGetMessageResponse::fromArray(
+            $this->request('GET', $this->messagePath($messageUid), [
+                'headers' => $this->normalizeHeaders($headers),
+            ])
+        );
     }
 
     public function createSubmission(OpenapiCreateSubmissionPayload $payload): OpenapiCreateSubmissionResponse

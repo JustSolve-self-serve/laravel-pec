@@ -52,6 +52,19 @@ class ClientDriverResolutionTest extends TestCase
                 'total' => 0,
                 'n_of_pages' => 0,
             ], 200),
+            'https://openapi.example.test/inbox/*' => Http::response([
+                'data' => [
+                    [
+                        'sender' => 'sender@example.test',
+                        'recipient' => 'recipient@example.test',
+                        'date' => '2026-03-10 10:00:00',
+                        'object' => 'PEC subject',
+                        'body' => 'PEC body',
+                    ],
+                ],
+                'success' => true,
+                'message' => 'Ok',
+            ], 200),
             'https://openapi.example.test/send' => Http::response([
                 'success' => true,
                 'message' => 'Queued',
