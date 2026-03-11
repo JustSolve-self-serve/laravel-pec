@@ -58,13 +58,11 @@ class ClientDriverResolutionTest extends TestCase
             if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
                 return Http::response([
                     'data' => [
-                        [
-                            'sender' => 'sender@example.test',
-                            'recipient' => 'recipient@example.test',
-                            'date' => '2026-03-10 10:00:00',
-                            'object' => 'PEC subject',
-                            'body' => 'PEC body',
-                        ],
+                        'sender' => 'sender@example.test',
+                        'recipient' => 'recipient@example.test',
+                        'date' => '2026-03-10 10:00:00',
+                        'object' => 'PEC subject',
+                        'body' => 'PEC body',
                     ],
                     'success' => true,
                     'message' => 'Ok',

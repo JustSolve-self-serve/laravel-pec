@@ -141,21 +141,18 @@ class OpenapiClientTest extends TestCase
     {
         $response = OpenapiGetMessageResponse::fromArray([
             'data' => [
-                [
-                    'sender' => 'sender@example.test',
-                    'recipient' => 'recipient@example.test',
-                    'date' => '2026-03-10 10:00:00',
-                    'object' => 'PEC subject',
-                    'body' => 'PEC body',
-                ],
+                'sender' => 'sender@example.test',
+                'recipient' => 'recipient@example.test',
+                'date' => '2026-03-10 10:00:00',
+                'object' => 'PEC subject',
+                'body' => 'PEC body',
             ],
             'success' => true,
             'message' => 'Ok',
         ]);
 
-        $this->assertCount(1, $response->data);
-        $this->assertInstanceOf(InboxSingle::class, $response->data[0]);
-        $this->assertSame('PEC body', $response->data[0]->body);
+        $this->assertInstanceOf(InboxSingle::class, $response->data);
+        $this->assertSame('PEC body', $response->data->body);
         $this->assertTrue($response->success);
     }
 
@@ -165,7 +162,13 @@ class OpenapiClientTest extends TestCase
         $this->expectExceptionMessage('OpenapiGetMessageResponse.success must be a boolean.');
 
         OpenapiGetMessageResponse::fromArray([
-            'data' => [],
+            'data' => [
+                'sender' => 'sender@example.test',
+                'recipient' => 'recipient@example.test',
+                'date' => '2026-03-10 10:00:00',
+                'object' => 'PEC subject',
+                'body' => 'PEC body',
+            ],
             'success' => 'yes',
             'message' => 'Ok',
         ]);
@@ -277,13 +280,11 @@ class OpenapiClientTest extends TestCase
         Http::fake([
             '*' => Http::response([
                 'data' => [
-                    [
-                        'sender' => 'sender@example.test',
-                        'recipient' => 'recipient@example.test',
-                        'date' => '2026-03-10 10:00:00',
-                        'object' => 'PEC subject',
-                        'body' => 'PEC body',
-                    ],
+                    'sender' => 'sender@example.test',
+                    'recipient' => 'recipient@example.test',
+                    'date' => '2026-03-10 10:00:00',
+                    'object' => 'PEC subject',
+                    'body' => 'PEC body',
                 ],
                 'success' => true,
                 'message' => 'Ok',
@@ -295,9 +296,8 @@ class OpenapiClientTest extends TestCase
         $response = $client->getMessage('message-1');
 
         $this->assertInstanceOf(OpenapiGetMessageResponse::class, $response);
-        $this->assertCount(1, $response->data);
-        $this->assertInstanceOf(InboxSingle::class, $response->data[0]);
-        $this->assertSame('PEC subject', $response->data[0]->object);
+        $this->assertInstanceOf(InboxSingle::class, $response->data);
+        $this->assertSame('PEC subject', $response->data->object);
 
         Http::assertSent(function ($request): bool {
             return $request->method() === 'GET'
@@ -345,13 +345,11 @@ class OpenapiClientTest extends TestCase
             if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
                 return Http::response([
                     'data' => [
-                        [
-                            'sender' => 'sender@example.test',
-                            'recipient' => 'recipient@example.test',
-                            'date' => '2026-03-10 10:00:00',
-                            'object' => 'PEC subject',
-                            'body' => 'PEC body',
-                        ],
+                        'sender' => 'sender@example.test',
+                        'recipient' => 'recipient@example.test',
+                        'date' => '2026-03-10 10:00:00',
+                        'object' => 'PEC subject',
+                        'body' => 'PEC body',
                     ],
                     'success' => true,
                     'message' => 'Ok',
