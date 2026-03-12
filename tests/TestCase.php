@@ -7,6 +7,16 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    protected function legalmailBaseUrl(): string
+    {
+        return rtrim((string) config('pec.drivers.legalmail.base_url'), '/');
+    }
+
+    protected function openapiPecMassivaBaseUrl(): string
+    {
+        return rtrim((string) config('pec.drivers.openapi_pec_massiva.base_url'), '/');
+    }
+
     protected function getPackageProviders($app): array
     {
         return [

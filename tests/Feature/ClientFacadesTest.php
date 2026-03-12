@@ -12,6 +12,8 @@ class ClientFacadesTest extends TestCase
 {
     public function test_legalmail_facade_resolves_legalmail_client(): void
     {
+        $baseUrl = $this->legalmailBaseUrl();
+
         Http::fake([
             '*' => Http::response(['data' => []], 200),
         ]);
@@ -21,11 +23,13 @@ class ClientFacadesTest extends TestCase
         $this->assertSame(['data' => []], $response);
 
         Http::assertSent(fn ($request): bool => $request->method() === 'GET'
-            && str_starts_with($request->url(), 'https://sandbox.example.test/mailbox-1/folders/folder-1/messages/999'));
+            && str_starts_with($request->url(), "{$baseUrl}/mailbox-1/folders/folder-1/messages/999"));
     }
 
     public function test_openapi_facade_resolves_openapi_client(): void
     {
+        $baseUrl = $this->openapiPecMassivaBaseUrl();
+
         Http::fake([
             '*' => Http::response([
                 'success' => true,
@@ -51,6 +55,6 @@ class ClientFacadesTest extends TestCase
         $this->assertSame('message-1', $response->messageId);
 
         Http::assertSent(fn ($request): bool => $request->method() === 'POST'
-            && str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/send'));
+            && str_starts_with($request->url(), "{$baseUrl}/send"));
     }
 }

@@ -198,6 +198,8 @@ class OpenapiClientTest extends TestCase
 
     public function test_openapi_client_returns_typed_create_submission_response(): void
     {
+        $baseUrl = $this->openapiPecMassivaBaseUrl();
+
         Http::fake([
             '*' => Http::response([
                 'success' => true,
@@ -228,8 +230,8 @@ class OpenapiClientTest extends TestCase
         $this->assertSame('message-1', $response->messageId);
         $this->assertSame(1, $response->sent);
 
-        Http::assertSent(function ($request): bool {
-            if ($request->method() !== 'POST' || ! str_starts_with($request->url(), 'https://test.ws.pecmassiva.com/send')) {
+        Http::assertSent(function ($request) use ($baseUrl): bool {
+            if ($request->method() !== 'POST' || ! str_starts_with($request->url(), "{$baseUrl}/send")) {
                 return false;
             }
 
@@ -241,6 +243,8 @@ class OpenapiClientTest extends TestCase
 
     public function test_openapi_client_returns_typed_list_messages_response(): void
     {
+        $baseUrl = $this->openapiPecMassivaBaseUrl();
+
         Http::fake([
             '*' => Http::response([
                 'data' => [
@@ -262,21 +266,23 @@ class OpenapiClientTest extends TestCase
 
         $client = $this->app->make(OpenapiPecMassivaClient::class);
 
-        $response = $client->listMessages(['limit' => 10]);
+        $response = $client->listMessages(['q' => 'test']);
 
         $this->assertInstanceOf(OpenapiListMessagesResponse::class, $response);
         $this->assertCount(1, $response->data);
         $this->assertInstanceOf(InboxSearch::class, $response->data[0]);
         $this->assertSame('PEC subject', $response->data[0]->object);
 
-        Http::assertSent(function ($request): bool {
+        Http::assertSent(function ($request) use ($baseUrl): bool {
             return $request->method() === 'GET'
-                && $request->url() === 'https://test.ws.pecmassiva.com/inbox?limit=10';
+                && $request->url() === "{$baseUrl}/inbox?q=test";
         });
     }
 
     public function test_openapi_client_returns_typed_get_message_response(): void
     {
+        $baseUrl = $this->openapiPecMassivaBaseUrl();
+
         Http::fake([
             '*' => Http::response([
                 'data' => [
@@ -299,14 +305,16 @@ class OpenapiClientTest extends TestCase
         $this->assertInstanceOf(InboxSingle::class, $response->data);
         $this->assertSame('PEC subject', $response->data->object);
 
-        Http::assertSent(function ($request): bool {
+        Http::assertSent(function ($request) use ($baseUrl): bool {
             return $request->method() === 'GET'
-                && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1';
+                && $request->url() === "{$baseUrl}/inbox/message-1";
         });
     }
 
     public function test_openapi_client_returns_typed_delete_message_response(): void
     {
+        $baseUrl = $this->openapiPecMassivaBaseUrl();
+
         Http::fake([
             '*' => Http::response([
                 'success' => true,
@@ -322,16 +330,18 @@ class OpenapiClientTest extends TestCase
         $this->assertTrue($response->success);
         $this->assertSame('Deleted', $response->message);
 
-        Http::assertSent(function ($request): bool {
+        Http::assertSent(function ($request) use ($baseUrl): bool {
             return $request->method() === 'DELETE'
-                && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1';
+                && $request->url() === "{$baseUrl}/inbox/message-1";
         });
     }
 
     public function test_openapi_client_sends_openapi_headers_for_list_get_and_delete(): void
     {
-        Http::fake(function ($request) {
-            if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox') {
+        $baseUrl = $this->openapiPecMassivaBaseUrl();
+
+        Http::fake(function ($request) use ($baseUrl) {
+            if ($request->method() === 'GET' && $request->url() === "{$baseUrl}/inbox") {
                 return Http::response([
                     'data' => [],
                     'success' => true,
@@ -342,7 +352,7 @@ class OpenapiClientTest extends TestCase
                 ], 200);
             }
 
-            if ($request->method() === 'GET' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
+            if ($request->method() === 'GET' && $request->url() === "{$baseUrl}/inbox/message-1") {
                 return Http::response([
                     'data' => [
                         'sender' => 'sender@example.test',
@@ -356,7 +366,7 @@ class OpenapiClientTest extends TestCase
                 ], 200);
             }
 
-            if ($request->method() === 'DELETE' && $request->url() === 'https://test.ws.pecmassiva.com/inbox/message-1') {
+            if ($request->method() === 'DELETE' && $request->url() === "{$baseUrl}/inbox/message-1") {
                 return Http::response([
                     'success' => true,
                     'message' => 'Deleted',
