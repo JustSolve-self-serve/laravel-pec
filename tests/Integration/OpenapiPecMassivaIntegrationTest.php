@@ -45,20 +45,6 @@ class OpenapiPecMassivaIntegrationTest extends TestCase
         $this->assertTrue($deleted->success);
     }
 
-    /*public function test_it_can_send_a_pec_against_openapi_sandbox_when_submission_env_is_provided(): void
-    {
-        $this->skipIfIntegrationTestsAreDisabled();
-
-        $payload = $this->submissionPayloadFromEnv();
-
-        $client = $this->app->make(OpenapiPecMassivaClient::class);
-        $response = $client->createSubmission($payload);
-
-        $this->assertInstanceOf(OpenapiCreateSubmissionResponse::class, $response);
-        $this->assertTrue($response->success);
-        $this->assertNotSame('', $response->messageId);
-    }*/
-
     private function openapiCredentialHeaders(): OpenapiHeaders
     {
         $username = env('OPENAPI_PEC_TEST_USERNAME');
