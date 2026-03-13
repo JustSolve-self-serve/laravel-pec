@@ -6,6 +6,9 @@ use InvalidArgumentException;
 
 class OpenapiAttachment
 {
+    /**
+     * @param string $file Base64-encoded attachment content expected by the OpenAPI provider.
+     */
     public function __construct(
         public readonly string $name,
         public readonly string $file
@@ -14,6 +17,7 @@ class OpenapiAttachment
 
     /**
      * @param array{name: string, file: string} $data
+     *   The `file` value must contain base64-encoded attachment content.
      */
     public static function fromArray(array $data): self
     {

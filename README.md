@@ -143,6 +143,8 @@ $response = $legalmailClient->createSubmission([
 
 OpenAPI typed models (for `openapi_pec_massiva`):
 
+`OpenapiAttachment::$file` must contain the attachment content as a base64-encoded string.
+
 ```php
 use JustSolve\LaravelPec\Openapi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;

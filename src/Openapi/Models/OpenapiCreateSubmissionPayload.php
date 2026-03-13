@@ -31,6 +31,7 @@ class OpenapiCreateSubmissionPayload
      *   username: string,
      *   password: string
      * } $data
+     *   For attachment arrays, each `file` value must contain base64-encoded attachment content.
      */
     public static function fromArray(array $data): self
     {
