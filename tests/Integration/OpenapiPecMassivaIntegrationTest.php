@@ -6,6 +6,7 @@ use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiDeleteMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
@@ -72,7 +73,12 @@ class OpenapiPecMassivaIntegrationTest extends TestCase
             recipient: $requiredEnv['OPENAPI_PEC_TEST_RECIPIENT'],
             subject: (string) env('OPENAPI_PEC_TEST_SUBJECT', 'OpenAPI PEC integration test'),
             body: (string) env('OPENAPI_PEC_TEST_BODY', 'Automated integration test message.'),
-            attachments: [],
+            attachments: [
+                new OpenapiAttachment(
+                    'integration-test.txt',
+                    base64_encode('OpenAPI PEC integration attachment')
+                ),
+            ],
             username: $requiredEnv['OPENAPI_PEC_TEST_USERNAME'],
             password: $requiredEnv['OPENAPI_PEC_TEST_PASSWORD']
         );
