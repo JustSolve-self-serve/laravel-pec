@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiDeleteMessageResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiGetAccettazioneConsegnaResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
@@ -49,6 +50,17 @@ class OpenapiPecMassivaClient
     ): OpenapiGetMessageResponse {
         return OpenapiGetMessageResponse::fromArray(
             $this->request('GET', $this->messagePath($messageUid), [
+                'headers' => $this->normalizeHeaders($headers),
+            ])
+        );
+    }
+
+    public function getAccetazioneConsegna(
+        string $messageUid,
+        ?OpenapiHeaders $headers = null
+    ): OpenapiGetAccettazioneConsegnaResponse {
+        return OpenapiGetAccettazioneConsegnaResponse::fromArray(
+            $this->request('GET', $this->submissionMessagePath($messageUid), [
                 'headers' => $this->normalizeHeaders($headers),
             ])
         );
@@ -148,5 +160,10 @@ class OpenapiPecMassivaClient
     protected function submissionPath(): string
     {
         return '/send';
+    }
+
+    protected function submissionMessagePath(string $messageUid): string
+    {
+        return $this->submissionPath() . '/' . rawurlencode($messageUid);
     }
 }

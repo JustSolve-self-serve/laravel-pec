@@ -10,9 +10,11 @@ use JustSolve\LaravelPec\Openapi\Models\OpenapiAttachment;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiDeleteMessageResponse;
+use JustSolve\LaravelPec\Openapi\Models\OpenapiGetAccettazioneConsegnaResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiGetMessageResponse;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiListMessagesResponse;
+use JustSolve\LaravelPec\Openapi\Models\ResponseStatus;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
@@ -154,6 +156,48 @@ class OpenapiClientTest extends TestCase
         $this->assertInstanceOf(InboxSingle::class, $response->data);
         $this->assertSame('PEC body', $response->data->body);
         $this->assertTrue($response->success);
+    }
+
+    public function test_it_hydrates_typed_get_accettazione_consegna_response(): void
+    {
+        $response = OpenapiGetAccettazioneConsegnaResponse::fromArray([
+            'data' => [
+                [
+                    'sender' => 'sender@example.test',
+                    'recipient' => 'recipient@example.test',
+                    'date' => '2026-03-10 10:00:00',
+                    'object' => 'PEC subject',
+                    'message' => 'Accepted',
+                ],
+            ],
+            'success' => true,
+            'message' => 'Ok',
+        ]);
+
+        $this->assertCount(1, $response->data);
+        $this->assertInstanceOf(ResponseStatus::class, $response->data[0]);
+        $this->assertSame('Accepted', $response->data[0]->message);
+        $this->assertTrue($response->success);
+    }
+
+    public function test_it_rejects_invalid_get_accettazione_consegna_response_data(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('OpenapiGetAccettazioneConsegnaResponse.success must be a boolean.');
+
+        OpenapiGetAccettazioneConsegnaResponse::fromArray([
+            'data' => [
+                [
+                    'sender' => 'sender@example.test',
+                    'recipient' => 'recipient@example.test',
+                    'date' => '2026-03-10 10:00:00',
+                    'object' => 'PEC subject',
+                    'message' => 'Accepted',
+                ],
+            ],
+            'success' => 'yes',
+            'message' => 'Ok',
+        ]);
     }
 
     public function test_it_rejects_invalid_get_message_response_data(): void
@@ -311,6 +355,41 @@ class OpenapiClientTest extends TestCase
         });
     }
 
+    public function test_openapi_client_returns_typed_get_accettazione_consegna_response(): void
+    {
+        $baseUrl = $this->openapiPecMassivaBaseUrl();
+
+        Http::fake([
+            '*' => Http::response([
+                'data' => [
+                    [
+                        'sender' => 'sender@example.test',
+                        'recipient' => 'recipient@example.test',
+                        'date' => '2026-03-10 10:00:00',
+                        'object' => 'PEC subject',
+                        'message' => 'Accepted',
+                    ],
+                ],
+                'success' => true,
+                'message' => 'Ok',
+            ], 200),
+        ]);
+
+        $client = $this->app->make(OpenapiPecMassivaClient::class);
+
+        $response = $client->getAccetazioneConsegna('message-1');
+
+        $this->assertInstanceOf(OpenapiGetAccettazioneConsegnaResponse::class, $response);
+        $this->assertCount(1, $response->data);
+        $this->assertInstanceOf(ResponseStatus::class, $response->data[0]);
+        $this->assertSame('Accepted', $response->data[0]->message);
+
+        Http::assertSent(function ($request) use ($baseUrl): bool {
+            return $request->method() === 'GET'
+                && $request->url() === "{$baseUrl}/send/message-1";
+        });
+    }
+
     public function test_openapi_client_returns_typed_delete_message_response(): void
     {
         $baseUrl = $this->openapiPecMassivaBaseUrl();
@@ -366,6 +445,22 @@ class OpenapiClientTest extends TestCase
                 ], 200);
             }
 
+            if ($request->method() === 'GET' && $request->url() === "{$baseUrl}/send/message-1") {
+                return Http::response([
+                    'data' => [
+                        [
+                            'sender' => 'sender@example.test',
+                            'recipient' => 'recipient@example.test',
+                            'date' => '2026-03-10 10:00:00',
+                            'object' => 'PEC subject',
+                            'message' => 'Accepted',
+                        ],
+                    ],
+                    'success' => true,
+                    'message' => 'Ok',
+                ], 200);
+            }
+
             if ($request->method() === 'DELETE' && $request->url() === "{$baseUrl}/inbox/message-1") {
                 return Http::response([
                     'success' => true,
@@ -382,9 +477,10 @@ class OpenapiClientTest extends TestCase
 
         $client->listMessages(headers: $headers);
         $client->getMessage('message-1', headers: $headers);
+        $client->getAccetazioneConsegna('message-1', headers: $headers);
         $client->deleteMessage('message-1', headers: $headers);
 
-        Http::assertSentCount(3);
+        Http::assertSentCount(4);
         Http::assertSent(function ($request): bool {
             return $request->hasHeader('x-username', 'openapi-user')
                 && $request->hasHeader('x-password', 'openapi-pass');
