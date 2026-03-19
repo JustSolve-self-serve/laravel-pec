@@ -10,17 +10,17 @@ class ResponseStatus
         public readonly string $sender,
         public readonly string $recipient,
         public readonly string $date,
-        public readonly string $object,
+        public readonly string $subject,
         public readonly string $message
     ) {
     }
 
     /**
-     * @param array{sender: string, recipient: string, date: string, object: string, message: string} $data
+     * @param array{sender: string, recipient: string, date: string, subject: string, message: string} $data
      */
     public static function fromArray(array $data): self
     {
-        foreach (['sender', 'recipient', 'date', 'object', 'message'] as $requiredStringField) {
+        foreach (['sender', 'recipient', 'date', 'subject', 'message'] as $requiredStringField) {
             if (! isset($data[$requiredStringField]) || ! is_string($data[$requiredStringField]) || $data[$requiredStringField] === '') {
                 throw new InvalidArgumentException("ResponseStatus.{$requiredStringField} must be a non-empty string.");
             }
@@ -30,13 +30,13 @@ class ResponseStatus
             sender: $data['sender'],
             recipient: $data['recipient'],
             date: $data['date'],
-            object: $data['object'],
+            subject: $data['subject'],
             message: $data['message']
         );
     }
 
     /**
-     * @return array{sender: string, recipient: string, date: string, object: string, message: string}
+     * @return array{sender: string, recipient: string, date: string, subject: string, message: string}
      */
     public function toArray(): array
     {
@@ -44,7 +44,7 @@ class ResponseStatus
             'sender' => $this->sender,
             'recipient' => $this->recipient,
             'date' => $this->date,
-            'object' => $this->object,
+            'subject' => $this->subject,
             'message' => $this->message,
         ];
     }

@@ -166,7 +166,7 @@ class OpenapiClientTest extends TestCase
                     'sender' => 'sender@example.test',
                     'recipient' => 'recipient@example.test',
                     'date' => '2026-03-10 10:00:00',
-                    'object' => 'PEC subject',
+                    'subject' => 'PEC subject',
                     'message' => 'Accepted',
                 ],
             ],
@@ -191,7 +191,7 @@ class OpenapiClientTest extends TestCase
                     'sender' => 'sender@example.test',
                     'recipient' => 'recipient@example.test',
                     'date' => '2026-03-10 10:00:00',
-                    'object' => 'PEC subject',
+                    'subject' => 'PEC subject',
                     'message' => 'Accepted',
                 ],
             ],
@@ -366,7 +366,7 @@ class OpenapiClientTest extends TestCase
                         'sender' => 'sender@example.test',
                         'recipient' => 'recipient@example.test',
                         'date' => '2026-03-10 10:00:00',
-                        'object' => 'PEC subject',
+                        'subject' => 'PEC subject',
                         'message' => 'Accepted',
                     ],
                 ],
@@ -382,6 +382,7 @@ class OpenapiClientTest extends TestCase
         $this->assertInstanceOf(OpenapiGetAccettazioneConsegnaResponse::class, $response);
         $this->assertCount(1, $response->data);
         $this->assertInstanceOf(ResponseStatus::class, $response->data[0]);
+        $this->assertSame('PEC subject', $response->data[0]->subject);
         $this->assertSame('Accepted', $response->data[0]->message);
 
         Http::assertSent(function ($request) use ($baseUrl): bool {
@@ -452,7 +453,7 @@ class OpenapiClientTest extends TestCase
                             'sender' => 'sender@example.test',
                             'recipient' => 'recipient@example.test',
                             'date' => '2026-03-10 10:00:00',
-                            'object' => 'PEC subject',
+                            'subject' => 'PEC subject',
                             'message' => 'Accepted',
                         ],
                     ],
