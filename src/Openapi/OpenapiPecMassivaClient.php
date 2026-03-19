@@ -55,7 +55,7 @@ class OpenapiPecMassivaClient
         );
     }
 
-    public function getAccetazioneConsegna(
+    public function getAccettazioneConsegna(
         string $messageUid,
         ?OpenapiHeaders $headers = null
     ): OpenapiGetAccettazioneConsegnaResponse {

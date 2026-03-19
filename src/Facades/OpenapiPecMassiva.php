@@ -15,7 +15,7 @@ use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 /**
  * @method static OpenapiListMessagesResponse listMessages(array $query = [], ?OpenapiHeaders $headers = null)
  * @method static OpenapiGetMessageResponse getMessage(string $messageUid, ?OpenapiHeaders $headers = null)
- * @method static OpenapiGetAccettazioneConsegnaResponse getAccetazioneConsegna(string $messageUid, ?OpenapiHeaders $headers = null)
+ * @method static OpenapiGetAccettazioneConsegnaResponse getAccettazioneConsegna(string $messageUid, ?OpenapiHeaders $headers = null)
  * @method static OpenapiCreateSubmissionResponse createSubmission(OpenapiCreateSubmissionPayload $payload)
  * @method static OpenapiDeleteMessageResponse deleteMessage(string $messageUid, ?OpenapiHeaders $headers = null)
  */

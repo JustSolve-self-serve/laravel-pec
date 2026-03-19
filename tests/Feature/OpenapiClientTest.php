@@ -377,7 +377,7 @@ class OpenapiClientTest extends TestCase
 
         $client = $this->app->make(OpenapiPecMassivaClient::class);
 
-        $response = $client->getAccetazioneConsegna('message-1');
+        $response = $client->getAccettazioneConsegna('message-1');
 
         $this->assertInstanceOf(OpenapiGetAccettazioneConsegnaResponse::class, $response);
         $this->assertCount(1, $response->data);
@@ -478,7 +478,7 @@ class OpenapiClientTest extends TestCase
 
         $client->listMessages(headers: $headers);
         $client->getMessage('message-1', headers: $headers);
-        $client->getAccetazioneConsegna('message-1', headers: $headers);
+        $client->getAccettazioneConsegna('message-1', headers: $headers);
         $client->deleteMessage('message-1', headers: $headers);
 
         Http::assertSentCount(4);
