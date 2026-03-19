@@ -18,7 +18,7 @@ class OpenapiGetAccettazioneConsegnaResponse
 
     /**
      * @param array{
-     *   data: array<int, array{sender: string, recipient: string, date: string, subject: string, message: ?string}|ResponseStatus>,
+     *   data: array<int, array{sender: string, recipient: string, date: string, subject: string, body: string}|ResponseStatus>,
      *   success: bool,
      *   message: string
      * } $data
@@ -60,7 +60,7 @@ class OpenapiGetAccettazioneConsegnaResponse
 
     /**
      * @return array{
-     *   data: array<int, array{sender: string, recipient: string, date: string, subject: string, message: ?string}>,
+     *   data: array<int, array{sender: string, recipient: string, date: string, subject: string, body: string}>,
      *   success: bool,
      *   message: string
      * }

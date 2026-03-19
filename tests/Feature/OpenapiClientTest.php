@@ -167,7 +167,7 @@ class OpenapiClientTest extends TestCase
                     'recipient' => 'recipient@example.test',
                     'date' => '2026-03-10 10:00:00',
                     'subject' => 'PEC subject',
-                    'message' => 'Accepted',
+                    'body' => 'Accepted',
                 ],
             ],
             'success' => true,
@@ -176,30 +176,8 @@ class OpenapiClientTest extends TestCase
 
         $this->assertCount(1, $response->data);
         $this->assertInstanceOf(ResponseStatus::class, $response->data[0]);
-        $this->assertSame('Accepted', $response->data[0]->message);
+        $this->assertSame('Accepted', $response->data[0]->body);
         $this->assertTrue($response->success);
-    }
-
-    public function test_it_hydrates_typed_get_accettazione_consegna_response_with_null_message(): void
-    {
-        $response = OpenapiGetAccettazioneConsegnaResponse::fromArray([
-            'data' => [
-                [
-                    'sender' => 'sender@example.test',
-                    'recipient' => 'recipient@example.test',
-                    'date' => '2026-03-10 10:00:00',
-                    'subject' => 'PEC subject',
-                    'message' => null,
-                ],
-            ],
-            'success' => true,
-            'message' => 'Ok',
-        ]);
-
-        $this->assertCount(1, $response->data);
-        $this->assertInstanceOf(ResponseStatus::class, $response->data[0]);
-        $this->assertSame('PEC subject', $response->data[0]->subject);
-        $this->assertNull($response->data[0]->message);
     }
 
     public function test_it_rejects_invalid_get_accettazione_consegna_response_data(): void
@@ -214,7 +192,7 @@ class OpenapiClientTest extends TestCase
                     'recipient' => 'recipient@example.test',
                     'date' => '2026-03-10 10:00:00',
                     'subject' => 'PEC subject',
-                    'message' => 'Accepted',
+                    'body' => 'Accepted',
                 ],
             ],
             'success' => 'yes',
@@ -389,7 +367,7 @@ class OpenapiClientTest extends TestCase
                         'recipient' => 'recipient@example.test',
                         'date' => '2026-03-10 10:00:00',
                         'subject' => 'PEC subject',
-                        'message' => 'Accepted',
+                        'body' => 'Accepted',
                     ],
                 ],
                 'success' => true,
@@ -405,7 +383,7 @@ class OpenapiClientTest extends TestCase
         $this->assertCount(1, $response->data);
         $this->assertInstanceOf(ResponseStatus::class, $response->data[0]);
         $this->assertSame('PEC subject', $response->data[0]->subject);
-        $this->assertSame('Accepted', $response->data[0]->message);
+        $this->assertSame('Accepted', $response->data[0]->body);
 
         Http::assertSent(function ($request) use ($baseUrl): bool {
             return $request->method() === 'GET'
@@ -476,7 +454,7 @@ class OpenapiClientTest extends TestCase
                             'recipient' => 'recipient@example.test',
                             'date' => '2026-03-10 10:00:00',
                             'subject' => 'PEC subject',
-                            'message' => 'Accepted',
+                            'body' => 'Accepted',
                         ],
                     ],
                     'success' => true,
