@@ -11,19 +11,23 @@ class ResponseStatus
         public readonly string $recipient,
         public readonly string $date,
         public readonly string $subject,
-        public readonly string $message
+        public readonly ?string $message
     ) {
     }
 
     /**
-     * @param array{sender: string, recipient: string, date: string, subject: string, message: string} $data
+     * @param array{sender: string, recipient: string, date: string, subject: string, message: ?string} $data
      */
     public static function fromArray(array $data): self
     {
-        foreach (['sender', 'recipient', 'date', 'subject', 'message'] as $requiredStringField) {
+        foreach (['sender', 'recipient', 'date', 'subject'] as $requiredStringField) {
             if (! isset($data[$requiredStringField]) || ! is_string($data[$requiredStringField]) || $data[$requiredStringField] === '') {
                 throw new InvalidArgumentException("ResponseStatus.{$requiredStringField} must be a non-empty string.");
             }
+        }
+
+        if (! array_key_exists('message', $data) || (! is_string($data['message']) && ! is_null($data['message']))) {
+            throw new InvalidArgumentException('ResponseStatus.message must be a string or null.');
         }
 
         return new self(
@@ -36,7 +40,7 @@ class ResponseStatus
     }
 
     /**
-     * @return array{sender: string, recipient: string, date: string, subject: string, message: string}
+     * @return array{sender: string, recipient: string, date: string, subject: string, message: ?string}
      */
     public function toArray(): array
     {

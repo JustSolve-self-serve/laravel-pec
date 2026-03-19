@@ -180,6 +180,28 @@ class OpenapiClientTest extends TestCase
         $this->assertTrue($response->success);
     }
 
+    public function test_it_hydrates_typed_get_accettazione_consegna_response_with_null_message(): void
+    {
+        $response = OpenapiGetAccettazioneConsegnaResponse::fromArray([
+            'data' => [
+                [
+                    'sender' => 'sender@example.test',
+                    'recipient' => 'recipient@example.test',
+                    'date' => '2026-03-10 10:00:00',
+                    'subject' => 'PEC subject',
+                    'message' => null,
+                ],
+            ],
+            'success' => true,
+            'message' => 'Ok',
+        ]);
+
+        $this->assertCount(1, $response->data);
+        $this->assertInstanceOf(ResponseStatus::class, $response->data[0]);
+        $this->assertSame('PEC subject', $response->data[0]->subject);
+        $this->assertNull($response->data[0]->message);
+    }
+
     public function test_it_rejects_invalid_get_accettazione_consegna_response_data(): void
     {
         $this->expectException(InvalidArgumentException::class);
