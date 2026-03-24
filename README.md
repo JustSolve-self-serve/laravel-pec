@@ -59,6 +59,50 @@ OPENAPI_PEC_MASSIVA_BASE_URL=https://test.ws.pecmassiva.com
 OPENAPI_PEC_MASSIVA_TOKEN=your-openapi-token
 ```
 
+## PEC Massiva Account Setup
+
+Registering and activating the PEC Massiva account is a prerequisite for obtaining the credentials used by the `openapi_pec_massiva` driver.
+
+### Registration and activation checklist
+
+1. Open the PEC Massiva registration page:
+   `https://www.pecmassiva.com/index.php/checkout/config/standard`
+2. Create the account with:
+   - PEC address to enable: `myorganization@pecmassiva.com`
+   - Company / organization data: `partita iva`, `company name`, `pec`, `email`, `phone`, `address`
+3. Accept contract / privacy policies and pay
+4. Check email inbox for an Openapi communication
+5. Complete and sign the received document with:
+   - PEC address to enable
+   - Company / organization data
+   - "Tipologia casella acquistata": `PEC MASSIVA VIA API STANDARD`
+   - "Durata del contratto": `1 anno`
+6. Send it back to Openapi with copy of your ID
+7. Wait for account credentials via email:
+   - Typical activation time: `48 hours`
+8. Generate a "Pec Massiva" production token from Openapi console:
+   `https://console.openapi.com/oauth`
+9. Save base url, token, credentials and pec massiva address in your Laravel app `.env`, and add configs in `config/pec.php`:
+```env
+OPENAPI_PEC_MASSIVA_BASE_URL=https://ws.pecmassiva.com
+OPENAPI_PEC_MASSIVA_TOKEN=my_token
+OPENAPI_PEC_MASSIVA_SENDER=myorganization@pecmassiva.com
+OPENAPI_PEC_MASSIVA_USERNAME=my_username
+OPENAPI_PEC_MASSIVA_PASSWORD=my_password
+```
+```php
+return [
+    'drivers' => [
+        'openapi_pec_massiva' => [
+            'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://test.ws.pecmassiva.com'),
+            'token' => env('OPENAPI_PEC_MASSIVA_TOKEN'),
+            'sender' => env('OPENAPI_PEC_MASSIVA_SENDER', null),
+            'username' => env('OPENAPI_PEC_MASSIVA_USERNAME', null),
+            'password' => env('OPENAPI_PEC_MASSIVA_PASSWORD', null),
+        ],
+  
+```
+
 ## Usage
 
 Resolve via container:
@@ -126,6 +170,37 @@ Driver endpoints:
 ```php
 $response = $client->getMessage('message-uid');
 ```
+
+### getAccettazioneConsegna
+
+OpenAPI only:
+
+- `openapi_pec_massiva`: `GET /send/{messageUId}`
+
+```php
+use JustSolve\LaravelPec\Openapi\Models\OpenapiHeaders;
+
+$openApiClient = app(\JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient::class);
+
+$headers = new OpenapiHeaders('openapi-user', 'openapi-pass');
+$response = $openApiClient->getAccettazioneConsegna('message-uid', $headers);
+
+if ($response->success) {
+    foreach ($response->data as $status) {
+        $sender = $status->sender;
+        $recipient = $status->recipient;
+        $date = $status->date;
+        $subject = $status->subject;
+        $body = $status->body;
+    }
+}
+```
+
+The method returns an `OpenapiGetAccettazioneConsegnaResponse` with:
+
+- `data`: array of `ResponseStatus`
+- `success`: boolean
+- `message`: string
 
 ### createSubmission
 
