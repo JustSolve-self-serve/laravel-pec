@@ -14,4 +14,8 @@ return [
             'token' => env('OPENAPI_PEC_MASSIVA_TOKEN'),
         ],
     ],
+    'openapi_company' => [
+        'base_url' => env('OPENAPI_COMPANY_BASE_URL', 'https://test.company.openapi.com'),
+        'token' => env('OPENAPI_COMPANY_TOKEN'),
+    ],
 ];

@@ -57,6 +57,10 @@ LEGALMAIL_PEC_MESSAGE_UID_VALIDITY=your-message-uid-validity
 # Driver: openapi_pec_massiva
 OPENAPI_PEC_MASSIVA_BASE_URL=https://test.ws.pecmassiva.com
 OPENAPI_PEC_MASSIVA_TOKEN=your-openapi-token
+
+# OpenAPI Company API
+OPENAPI_COMPANY_BASE_URL=https://test.company.openapi.com
+OPENAPI_COMPANY_TOKEN=your-openapi-company-token
 ```
 
 ## PEC Massiva Account Setup
@@ -109,10 +113,12 @@ Resolve via container:
 
 ```php
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
+use JustSolve\LaravelPec\Openapi\OpenapiCompanyClient;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 
 $legalmailClient = app(LegalmailClient::class);
 $openApiClient = app(OpenapiPecMassivaClient::class);
+$openApiCompanyClient = app(OpenapiCompanyClient::class);
 ```
 
 Or use helpers:
@@ -120,12 +126,14 @@ Or use helpers:
 ```php
 $legalmailClient = legalmail_client();
 $openApiClient = openapi_pec_massiva_client();
+$openApiCompanyClient = openapi_company_client();
 ```
 
 Or use facades:
 
 ```php
 use JustSolve\LaravelPec\Facades\Legalmail;
+use JustSolve\LaravelPec\Facades\OpenapiCompany;
 use JustSolve\LaravelPec\Facades\OpenapiPecMassiva;
 ```
 
@@ -201,6 +209,38 @@ The method returns an `OpenapiGetAccettazioneConsegnaResponse` with:
 - `data`: array of `ResponseStatus`
 - `success`: boolean
 - `message`: string
+
+### getPecAddress
+
+OpenAPI Company API:
+
+- `GET /IT-pec/{code}`
+
+`code` may be a VAT number, tax code, or OpenAPI company id.
+
+```php
+$openApiCompanyClient = app(\JustSolve\LaravelPec\Openapi\OpenapiCompanyClient::class);
+
+$response = $openApiCompanyClient->getPecAddress('12345678901');
+
+if ($response->success) {
+    foreach ($response->data as $pec) {
+        $currentAddress = $pec->pec;
+
+        foreach ($pec->history as $historyItem) {
+            $historicalAddress = $historyItem->pec;
+            $timestamp = $historyItem->timestamp;
+        }
+    }
+}
+```
+
+The method returns an `OpenapiGetPecAddressResponse` with:
+
+- `data`: array of `Pec` or `null`
+- `success`: boolean
+- `message`: string
+- `error`: nullable integer
 
 ### createSubmission
 
@@ -323,6 +363,20 @@ export OPENAPI_PEC_TEST_SUBJECT="Integration test subject"
 export OPENAPI_PEC_TEST_BODY="Integration test body"
 ```
 
+OpenAPI Company integration tests currently cover:
+- `getPecAddress()` with a valid VAT number
+- `getPecAddress()` with an invalid VAT number that must throw a `RuntimeException`
+
+Required variables for OpenAPI Company:
+
+```bash
+export OPENAPI_COMPANY_RUN_INTEGRATION_TESTS=true
+export OPENAPI_COMPANY_BASE_URL="https://test.company.openapi.com"
+export OPENAPI_COMPANY_TOKEN="your-openapi-company-token"
+export OPENAPI_COMPANY_TEST_VALID_VAT_NUMBER="12485671007"
+export OPENAPI_COMPANY_TEST_INVALID_VAT_NUMBER="00000000000"
+```
+
 Then run:
 
 ```bash
@@ -333,8 +387,12 @@ Notes:
 
 - `LEGALMAIL_PEC_RUN_INTEGRATION_TESTS=true` enables Legalmail integration tests.
 - `OPENAPI_PEC_RUN_INTEGRATION_TESTS=true` enables OpenAPI integration tests.
+- `OPENAPI_COMPANY_RUN_INTEGRATION_TESTS=true` enables OpenAPI Company integration tests.
 - If `OPENAPI_PEC_TEST_SENDER`, `OPENAPI_PEC_TEST_RECIPIENT`, `OPENAPI_PEC_TEST_USERNAME`, or `OPENAPI_PEC_TEST_PASSWORD` are missing, the OpenAPI send test is skipped.
 - `OPENAPI_PEC_MASSIVA_TOKEN` is required and is used as the bearer token for the OpenAPI client.
+- `OPENAPI_COMPANY_TEST_VALID_VAT_NUMBER` must be a VAT number that returns a successful PEC lookup response.
+- `OPENAPI_COMPANY_TEST_INVALID_VAT_NUMBER` must be a VAT number that the API rejects with an unsuccessful HTTP response.
+- `OPENAPI_COMPANY_TOKEN` is required and is used as the bearer token for the OpenAPI Company client.
 
 ## Error Handling
 

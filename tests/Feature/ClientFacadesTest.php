@@ -4,6 +4,7 @@ namespace JustSolve\LaravelPec\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
 use JustSolve\LaravelPec\Facades\Legalmail;
+use JustSolve\LaravelPec\Facades\OpenapiCompany;
 use JustSolve\LaravelPec\Facades\OpenapiPecMassiva;
 use JustSolve\LaravelPec\Openapi\Models\OpenapiCreateSubmissionPayload;
 use JustSolve\LaravelPec\Tests\TestCase;
@@ -56,5 +57,31 @@ class ClientFacadesTest extends TestCase
 
         Http::assertSent(fn ($request): bool => $request->method() === 'POST'
             && str_starts_with($request->url(), "{$baseUrl}/send"));
+    }
+
+    public function test_openapi_company_facade_resolves_openapi_company_client(): void
+    {
+        $baseUrl = $this->openapiCompanyBaseUrl();
+
+        Http::fake([
+            '*' => Http::response([
+                'data' => [
+                    [
+                        'pec' => 'company@example.test',
+                        'history' => [],
+                    ],
+                ],
+                'success' => true,
+                'message' => 'Ok',
+            ], 200),
+        ]);
+
+        $response = OpenapiCompany::getPecAddress('12345678901');
+
+        $this->assertTrue($response->success);
+        $this->assertSame('company@example.test', $response->data[0]->pec);
+
+        Http::assertSent(fn ($request): bool => $request->method() === 'GET'
+            && str_starts_with($request->url(), "{$baseUrl}/IT-pec/12345678901"));
     }
 }

@@ -17,6 +17,11 @@ abstract class TestCase extends Orchestra
         return rtrim((string) config('pec.drivers.openapi_pec_massiva.base_url'), '/');
     }
 
+    protected function openapiCompanyBaseUrl(): string
+    {
+        return rtrim((string) config('pec.openapi_company.base_url'), '/');
+    }
+
     protected function getPackageProviders($app): array
     {
         return [
@@ -38,6 +43,11 @@ abstract class TestCase extends Orchestra
                 'base_url' => env('OPENAPI_PEC_MASSIVA_BASE_URL', 'https://test.ws.pecmassiva.com'),
                 'token' => env('OPENAPI_PEC_MASSIVA_TOKEN', 'openapi-token'),
             ],
+        ]);
+
+        $app['config']->set('pec.openapi_company', [
+            'base_url' => env('OPENAPI_COMPANY_BASE_URL', 'https://test.company.openapi.com'),
+            'token' => env('OPENAPI_COMPANY_TOKEN', 'company-token'),
         ]);
     }
 }

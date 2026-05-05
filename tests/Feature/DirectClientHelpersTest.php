@@ -3,6 +3,7 @@
 namespace JustSolve\LaravelPec\Tests\Feature;
 
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
+use JustSolve\LaravelPec\Openapi\OpenapiCompanyClient;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 use JustSolve\LaravelPec\Tests\TestCase;
 
@@ -20,5 +21,12 @@ class DirectClientHelpersTest extends TestCase
         $client = openapi_pec_massiva_client();
 
         $this->assertInstanceOf(OpenapiPecMassivaClient::class, $client);
+    }
+
+    public function test_it_resolves_openapi_company_client_helper(): void
+    {
+        $client = openapi_company_client();
+
+        $this->assertInstanceOf(OpenapiCompanyClient::class, $client);
     }
 }

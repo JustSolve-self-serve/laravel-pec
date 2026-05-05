@@ -1,6 +1,7 @@
 <?php
 
 use JustSolve\LaravelPec\Legalmail\LegalmailClient;
+use JustSolve\LaravelPec\Openapi\OpenapiCompanyClient;
 use JustSolve\LaravelPec\Openapi\OpenapiPecMassivaClient;
 
 if (! function_exists('legalmail_client')) {
@@ -18,6 +19,16 @@ if (! function_exists('openapi_pec_massiva_client')) {
     {
         /** @var OpenapiPecMassivaClient $client */
         $client = app(OpenapiPecMassivaClient::class);
+
+        return $client;
+    }
+}
+
+if (! function_exists('openapi_company_client')) {
+    function openapi_company_client(): OpenapiCompanyClient
+    {
+        /** @var OpenapiCompanyClient $client */
+        $client = app(OpenapiCompanyClient::class);
 
         return $client;
     }

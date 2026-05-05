@@ -33,7 +33,8 @@
       ],
       "aliases": {
         "Legalmail": "JustSolve\\LaravelPec\\Facades\\Legalmail",
-        "OpenapiPecMassiva": "JustSolve\\LaravelPec\\Facades\\OpenapiPecMassiva"
+        "OpenapiPecMassiva": "JustSolve\\LaravelPec\\Facades\\OpenapiPecMassiva",
+        "OpenapiCompany": "JustSolve\\LaravelPec\\Facades\\OpenapiCompany"
       }
     }
   },
