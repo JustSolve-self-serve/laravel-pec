@@ -9,6 +9,7 @@ use JustSolve\LaravelPec\Openapi\Models\Pec;
 use JustSolve\LaravelPec\Openapi\Models\PecHistoryItem;
 use JustSolve\LaravelPec\Openapi\OpenapiCompanyClient;
 use JustSolve\LaravelPec\Tests\TestCase;
+use RuntimeException;
 
 class OpenapiCompanyClientTest extends TestCase
 {
@@ -117,5 +118,23 @@ class OpenapiCompanyClientTest extends TestCase
                 && $request->hasHeader('Authorization', 'Bearer company-token')
                 && $request->hasHeader('Accept', 'application/json');
         });
+    }
+
+    public function test_openapi_company_client_throws_api_message_on_error(): void
+    {
+        Http::fake([
+            '*' => Http::response([
+                'success' => false,
+                'message' => 'Invalid VAT number',
+                'error' => 400,
+            ], 400),
+        ]);
+
+        $client = $this->app->make(OpenapiCompanyClient::class);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid VAT number');
+
+        $client->getPecAddress('invalid');
     }
 }

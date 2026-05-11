@@ -63,13 +63,7 @@ class OpenapiCompanyClient
             return $response->json() ?? [];
         }
 
-        $message = sprintf(
-            'PEC request failed with status [%d]: %s',
-            $response->status(),
-            $response->body()
-        );
-
-        throw new RuntimeException($message);
+        throw new RuntimeException($response->json('message'));
     }
 
     protected function pecAddressPath(string $code): string
